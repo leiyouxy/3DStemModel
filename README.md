@@ -1,4 +1,4 @@
-# 3D Stem Model 
+# 3D Stem Model Construction and Measurement
 A software for 3D stem model construction and measurment.
 Author: Lei You et al.
 
