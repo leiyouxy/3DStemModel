@@ -1,9 +1,11 @@
 # 3D Stem Model Construction and Measurement
 ## Introduction
 A software for 3D stem model construction and measurment.
-<!--
-Author: Lei You et al.
--->
+
+Tree stem is traditionally assumed as a regular geometry, which is consistent with the real geometry of the stem. for this issue,
+we present a novel 3D stem model with geometry consistency and its corresponding stem parameter retrieval methods using terrestrial laser scanning data. We have submitted the paper to the journal, and released the current version of the developed software.
+
+## Download
 
 [Open project in github](https://github.com/leiyouxy/3DStemModel)
 
