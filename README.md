@@ -11,6 +11,6 @@ Author: Lei You et al.
 Please run Bin\TreePclQtGui.exe to enjoy it. 
 High performance graphics card provides a smooth visual experience.
 
-Please watch 3DStemModelConstructionWithCaption.mp4 to see the operation video or see the Help.docx to enjoy it.
+Please watch [video](3DStemModelConstructionWithCaption.mp4) to see the operation video or see the [HelpDoc](Help.docx) to enjoy it.
 
 If you have any problem, please feel free to contact me, Email:leiyou@xynu.edu.cn.
