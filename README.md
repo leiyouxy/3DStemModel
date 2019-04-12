@@ -10,7 +10,7 @@ Author: Lei You et al.
 [Download from github](https://github.com/leiyouxy/3DStemModel/archive/master.zip)
 
 Please run Bin\TreePclQtGui.exe to enjoy it. 
-High performance graphics card provides a smooth visual experience.
+High performance graphics card will provide a smooth visual experience.
 
 Please watch [video](https://raw.githubusercontent.com/leiyouxy/3DStemModel/master/3DStemModelConstructionWithCaption.mp4) to see the operation video or see the [help document](https://raw.githubusercontent.com/leiyouxy/3DStemModel/master/Help.docx) to enjoy it.
 
