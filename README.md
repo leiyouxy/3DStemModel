@@ -1,6 +1,6 @@
 # 3D Stem Model Construction and Measurement
 A software for 3D stem model construction and measurment.
-Author: Lei You et al.
+%Author: Lei You et al.
 
 [Open project in github](https://github.com/leiyouxy/3DStemModel)
 
