@@ -6,7 +6,7 @@ Author: Lei You et al.
 
 [Download from github](https://github.com/leiyouxy/3DStemModel/archive/master.zip)
 
-Please Run Bin\TreePclQtGui.exe to enjoy it. 
+Please run Bin\TreePclQtGui.exe to enjoy it. 
 High performance graphics card provides a smooth visual experience.
 
 Please watch 3DStemModelConstructionWithCaption.mp4 to see the operation video or see the Help.docx to enjoy it.
