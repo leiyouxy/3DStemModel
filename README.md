@@ -32,7 +32,7 @@ If you have any problem, please feel free to contact [me](mailto:leiyou@xynu.edu
 
 ## Download
 
-[github中打开项目](https://github.com/leiyouxy/3DStemModel)
+[github中打开](https://github.com/leiyouxy/3DStemModel)
 
 [github上下载](https://github.com/leiyouxy/3DStemModel/archive/master.zip)
 
