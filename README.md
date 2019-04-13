@@ -32,9 +32,9 @@ If you have any problem, please feel free to contact [me](mailto:leiyou@xynu.edu
 
 ## Download
 
-[在github打开项目](https://github.com/leiyouxy/3DStemModel)
+[github中打开项目](https://github.com/leiyouxy/3DStemModel)
 
-[从github上下载](https://github.com/leiyouxy/3DStemModel/archive/master.zip)
+[github上下载](https://github.com/leiyouxy/3DStemModel/archive/master.zip)
 
 请运行Bin目录下的TreePclQtGui.exe体验该软件。高性能显卡将获得流畅的视觉体验。
 
