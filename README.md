@@ -1,5 +1,5 @@
 # 3D Stem Model Construction and Measurement
-------
+
 ## Introduction
 A software for 3D stem model construction and measurment.
 
@@ -26,7 +26,7 @@ If you have any problem, please feel free to contact [me](mailto:leiyou@xynu.edu
 ---------
 
 ## 简介
-树干三维模型与测量软件
+树干三维模型构建与测量的软件
 
 传统上将树干简化为规则的几何体，然而这与树干的真实几何形状不一致。为此，我们基于地面三维激光点云，提出了一种新颖的、与树干真实几何形状相符的三维树干模型及与之对应的树干参数提取方法。 我们已将该论文投稿给期刊（正在审稿）并发布了所发的当前版本的软件。
 
