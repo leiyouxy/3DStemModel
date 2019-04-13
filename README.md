@@ -38,6 +38,7 @@ If you have any problem, please feel free to contact [me](mailto:leiyou@xynu.edu
 
 请运行Bin目录下的TreePclQtGui.exe体验该软件。高性能显卡将获得流畅的视觉体验。
 
-请浏览操作[视频](https://raw.githubusercontent.com/leiyouxy/3DStemModel/master/3DStemModelConstructionWithCaption.mp4)  或 浏览[帮助](https://raw.githubusercontent.com/leiyouxy/3DStemModel/master/Help.docx) 文件了解此软件.
+请浏览操作[视频](https://raw.githubusercontent.com/leiyouxy/3DStemModel/master/3DStemModelConstructionWithCaption.mp4)  
+或浏览[帮助](https://raw.githubusercontent.com/leiyouxy/3DStemModel/master/Help.docx) 文件了解此软件.
 
 在使用如有问题, 请联系[开发者](mailto:leiyou@xynu.edu.cn).
