@@ -17,7 +17,7 @@ High performance graphics card will provide a smooth visual experience.
 
 Please watch the operation [video](https://raw.githubusercontent.com/leiyouxy/3DStemModel/master/3DStemModelConstructionWithCaption.mp4)  or see the [help](https://raw.githubusercontent.com/leiyouxy/3DStemModel/master/Help.docx) to grasp it.
 
-If you have any problem, please feel free to contact [me](mailto:leiyou@xynu.edu.cn).
+If you have any problem, please feel free to contact [us](mailto:leiyou@xynu.edu.cn).
 
 ## Related papers
 1. [Construction of Closed, Global Convexity and G<sup>2</sup> Continuity Curve](http://www.jcad.cn/jcadcms/show.action?code=publish_402880124b362464014b3c4d819803a1&newsid=d88720c81d4c406998d58e7e092e9cc1). Lei You, Yan Feng, Jianwei Guo, Xiaopeng Zhang, Shouzheng Tang, and Xinyu Song. Journal of Computer-Aided Design & Computer Graphics: 2017.
@@ -40,4 +40,4 @@ If you have any problem, please feel free to contact [me](mailto:leiyou@xynu.edu
 
 请浏览操作[视频](https://raw.githubusercontent.com/leiyouxy/3DStemModel/master/3DStemModelConstructionWithCaption.mp4)或浏览[帮助](https://raw.githubusercontent.com/leiyouxy/3DStemModel/master/Help.docx)文件快速了解此软件.
 
-在使用如有问题, 请联系[开发者](mailto:leiyou@xynu.edu.cn).
+在使用如有问题, 请联系[我们](mailto:leiyou@xynu.edu.cn).
