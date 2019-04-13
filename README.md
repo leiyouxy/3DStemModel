@@ -15,7 +15,7 @@ we present a novel 3D stem model with geometry consistency and its corresponding
 Please run Bin\TreePclQtGui.exe to enjoy it. 
 High performance graphics card will provide a smooth visual experience.
 
-Please watch the operation [video](https://raw.githubusercontent.com/leiyouxy/3DStemModel/master/3DStemModelConstructionWithCaption.mp4)  or see the [help](https://raw.githubusercontent.com/leiyouxy/3DStemModel/master/Help.docx) to grasp it.
+Please watch the operation [video](https://raw.githubusercontent.com/leiyouxy/3DStemModel/master/3DStemModelConstructionWithCaption.mp4)  or see the [help](https://raw.githubusercontent.com/leiyouxy/3DStemModel/master/Help.docx) to quickly grasp it.
 
 If you have any problem, please feel free to contact [us](mailto:leiyou@xynu.edu.cn).
 
