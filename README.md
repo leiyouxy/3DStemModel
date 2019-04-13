@@ -4,7 +4,7 @@
 A software for 3D stem model construction and measurment
 
 Tree stem is traditionally assumed as a regular geometry, which is inconsistent with the real geometry of the stem. for this issue,
-we present a novel 3D stem model with geometry consistency and its corresponding stem parameter retrieval methods using terrestrial laser scanning data. At present, we have submitted the paper to the journal (Under Review) and released the current version of the developed software.
+we present a novel 3D stem model with geometry consistency and its corresponding stem parameters retrieval methods using terrestrial laser scanning data. At present, we have submitted the paper to the journal (Under Review) and released the current version of the developed software.
 
 ## Download
 
