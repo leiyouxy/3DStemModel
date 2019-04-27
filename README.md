@@ -30,7 +30,7 @@ If you have any problem, please feel free to contact [us](mailto:leiyou@xynu.edu
 
 传统上将树干简化为规则的几何体，然而这与树干的真实几何形状不一致。为此，基于地面三维激光点云，我们提出一种新颖的、与树干真实几何形状相符的三维树干模型及与之对应的树干参数提取方法。 当前，我们已将该论文投稿至期刊（正在审稿）并发布开发的当前版本的软件。
 
-## Download
+## 下载
 
 [github中打开](https://github.com/leiyouxy/3DStemModel)
 
