@@ -20,8 +20,10 @@ Please watch the operation [video](https://raw.githubusercontent.com/leiyouxy/3D
 If you have any problem, please feel free to contact [us](mailto:leiyou@xynu.edu.cn).
 
 ## Related papers
-1. [Construction of Closed, Global Convexity and G<sup>2</sup> Continuity Curve](http://www.jcad.cn/jcadcms/show.action?code=publish_402880124b362464014b3c4d819803a1&newsid=d88720c81d4c406998d58e7e092e9cc1). Lei You, Yan Feng, Jianwei Guo, Xiaopeng Zhang, Shouzheng Tang, and Xinyu Song. Journal of Computer-Aided Design & Computer Graphics: 2017.
-2. [Precise Measurement of Stem Diameter by Simulating the Path of Diameter Tape from Terrestrial Laser Scanning Data](https://www.mdpi.com/2072-4292/8/9/717). Lei You, Shouzheng Tang, Xinyu Song, Yuancai Lei, Hao Zang, Minghua Lou and Chongyang Zhuang. Remote Sensing: 2016.
+1. 3D Stem Model Construction with Geometry Consistency using Terrestrial Laser Scanning Data. Lei You, Jianwei Guo, Yong Pang, Shouzheng Tang, Xinyu Song and Xiaopeng Zhang.International Journal of Remote Sensing: DOI: 10.1080/01431161.2020.1811919
+
+2. [Construction of Closed, Global Convexity and G<sup>2</sup> Continuity Curve](http://www.jcad.cn/jcadcms/show.action?code=publish_402880124b362464014b3c4d819803a1&newsid=d88720c81d4c406998d58e7e092e9cc1). Lei You, Yan Feng, Jianwei Guo, Xiaopeng Zhang, Shouzheng Tang, and Xinyu Song. Journal of Computer-Aided Design & Computer Graphics: 2017.
+3. [Precise Measurement of Stem Diameter by Simulating the Path of Diameter Tape from Terrestrial Laser Scanning Data](https://www.mdpi.com/2072-4292/8/9/717). Lei You, Shouzheng Tang, Xinyu Song, Yuancai Lei, Hao Zang, Minghua Lou and Chongyang Zhuang. Remote Sensing: 2016.
 
 ---------
 
