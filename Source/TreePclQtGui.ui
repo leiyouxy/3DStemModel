@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TreePclQtGuiClass</class>
+ <widget class="QMainWindow" name="TreePclQtGuiClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1063</width>
+    <height>763</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>16777215</width>
+    <height>16777215</height>
+   </size>
+  </property>
+  <property name="font">
+   <font>
+    <family>Times New Roman</family>
+   </font>
+  </property>
+  <property name="acceptDrops">
+   <bool>true</bool>
+  </property>
+  <property name="windowTitle">
+   <string>Tree</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../tree.ico</normaloff>../../tree.ico</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout" stretch="2,4">
+    <item>
+     <widget class="QGroupBox" name="groupBox">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>700</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>350</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Times New Roman</family>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
+      <property name="title">
+       <string>Functional Operation Area</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QVTKWidget" name="qvtkWidget" native="true">
+      <property name="maximumSize">
+       <size>
+        <width>16777214</width>
+        <height>16777214</height>
+       </size>
+      </property>
+      <property name="mouseTracking">
+       <bool>false</bool>
+      </property>
+      <property name="acceptDrops">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1063</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionOpen_File"/>
+    <addaction name="actionReload"/>
+    <addaction name="separator"/>
+    <addaction name="actionSave_Point_Cloud"/>
+    <addaction name="actionSave_as"/>
+    <addaction name="separator"/>
+    <addaction name="actionInsert_And_Move"/>
+   </widget>
+   <widget class="QMenu" name="menuTreePointPrc">
+    <property name="title">
+     <string>TreePointPrc</string>
+    </property>
+    <widget class="QMenu" name="menuBranches_Removal">
+     <property name="title">
+      <string>Branches Removal</string>
+     </property>
+     <addaction name="actionBranchesRemovalByTangentPlane"/>
+     <addaction name="actionTangent_Plane_And_Stem_Axis_Curve"/>
+     <addaction name="action_BranchesRemovalClusterAndCurvature"/>
+    </widget>
+    <addaction name="actionTreeStubRemove"/>
+    <addaction name="separator"/>
+    <addaction name="menuBranches_Removal"/>
+    <addaction name="actionSlice_DBScan"/>
+   </widget>
+   <widget class="QMenu" name="menuStemPointPrc">
+    <property name="title">
+     <string>StemPointPrc</string>
+    </property>
+    <widget class="QMenu" name="menuOutliers_Removal">
+     <property name="title">
+      <string>Outliers Removal</string>
+     </property>
+     <addaction name="actionRemoval_By_Neighbourhood_Number"/>
+     <addaction name="actionOutliersRemovalByNeighbour"/>
+     <addaction name="actionOutliersRemovalByQuantile"/>
+     <addaction name="actionRemove_By_Irregularity"/>
+    </widget>
+    <addaction name="actionStemPoints_Removal"/>
+    <addaction name="separator"/>
+    <addaction name="menuOutliers_Removal"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionReset_Camera"/>
+    <addaction name="separator"/>
+    <addaction name="actionSetting_For_Rending"/>
+    <addaction name="separator"/>
+    <addaction name="actionSave_Picture"/>
+    <addaction name="separator"/>
+    <addaction name="actionRemove_All"/>
+   </widget>
+   <widget class="QMenu" name="menu_StemParametersRetrieval">
+    <property name="title">
+     <string>ParametersRetrieval</string>
+    </property>
+    <addaction name="action_StemDiameterAndBasalArea"/>
+    <addaction name="separator"/>
+    <addaction name="actionStemVolumeByVerticalSlices"/>
+    <addaction name="actionStemVolumeByTetrahedron"/>
+    <addaction name="actionSimulate_Measure"/>
+   </widget>
+   <widget class="QMenu" name="menuBaseFittingMethods">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="actionGenerate_Points"/>
+    <addaction name="separator"/>
+    <addaction name="actionFittingMethods"/>
+    <addaction name="separator"/>
+    <addaction name="actionDownSample"/>
+    <addaction name="separator"/>
+    <addaction name="actionPoints_Cluster"/>
+    <addaction name="separator"/>
+    <addaction name="actionDelaunay_Parallel"/>
+    <addaction name="separator"/>
+    <addaction name="actionDemo_Form_and_Class"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuView"/>
+   <addaction name="menuBaseFittingMethods"/>
+   <addaction name="menuTreePointPrc"/>
+   <addaction name="menuStemPointPrc"/>
+   <addaction name="menu_StemParametersRetrieval"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionOpen_File">
+   <property name="text">
+    <string>Open Point Cloud</string>
+   </property>
+   <property name="statusTip">
+    <string>Open Point Cloud File</string>
+   </property>
+  </action>
+  <action name="actionSave_Point_Cloud">
+   <property name="text">
+    <string>Save</string>
+   </property>
+   <property name="statusTip">
+    <string>Save Point Cloud To File</string>
+   </property>
+  </action>
+  <action name="actionTreeStubRemove">
+   <property name="text">
+    <string>Stub Detection</string>
+   </property>
+  </action>
+  <action name="actionBranchesRemovalByTangentPlane">
+   <property name="text">
+    <string>Tangent Plane</string>
+   </property>
+  </action>
+  <action name="actionStemPoints_Removal">
+   <property name="text">
+    <string>Stem Points Removal</string>
+   </property>
+  </action>
+  <action name="actionCurve_Construction">
+   <property name="text">
+    <string>Curve Construction</string>
+   </property>
+  </action>
+  <action name="actionSave_Picture">
+   <property name="text">
+    <string>Save Current View to Picture</string>
+   </property>
+  </action>
+  <action name="actionRemove_All">
+   <property name="text">
+    <string>Remove All Point Cloud</string>
+   </property>
+  </action>
+  <action name="action_StemDiameterAndBasalArea">
+   <property name="text">
+    <string>Stem Diameter and Basal Area</string>
+   </property>
+   <property name="visible">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionSetting_For_Rending">
+   <property name="text">
+    <string>Setting For Rending</string>
+   </property>
+  </action>
+  <action name="actionOutliersRemovalByQuantile">
+   <property name="text">
+    <string>Removal By Quantile</string>
+   </property>
+  </action>
+  <action name="actionOutliersRemovalByNeighbour">
+   <property name="text">
+    <string>Removal By Neighbourhood Statistics</string>
+   </property>
+  </action>
+  <action name="actionReset_Camera">
+   <property name="text">
+    <string>Reset Camera</string>
+   </property>
+  </action>
+  <action name="actionRemoval_By_Neighbourhood_Number">
+   <property name="text">
+    <string>Removal By Neighbourhood Number</string>
+   </property>
+  </action>
+  <action name="actionStemVolumeByVerticalSlices">
+   <property name="text">
+    <string>Stem Volume By Vertical Slices</string>
+   </property>
+  </action>
+  <action name="actionStemVolumeByTetrahedron">
+   <property name="text">
+    <string>Stem Volume By Tetrahedron</string>
+   </property>
+  </action>
+  <action name="actionProfile_Curve_of_Vertical_slices_calculation">
+   <property name="text">
+    <string>Profile Curve of Vertical slices calculation</string>
+   </property>
+  </action>
+  <action name="actionSpline">
+   <property name="text">
+    <string>Subic Spline</string>
+   </property>
+  </action>
+  <action name="actionClosure_Convex_Curve_by_Cubic_Bezier">
+   <property name="text">
+    <string>Closure Convex Curve by Cubic Bezier</string>
+   </property>
+  </action>
+  <action name="actionCircle_Fitting">
+   <property name="text">
+    <string>Circle Fitting</string>
+   </property>
+  </action>
+  <action name="actionCylinder_Fitting">
+   <property name="text">
+    <string>Cylinder Fitting</string>
+   </property>
+  </action>
+  <action name="actionFittingMethods">
+   <property name="text">
+    <string>Fitting Methods</string>
+   </property>
+  </action>
+  <action name="actionDemo_Form_and_Class">
+   <property name="text">
+    <string>Demo Form  and Class</string>
+   </property>
+  </action>
+  <action name="actionReload">
+   <property name="text">
+    <string>Reload</string>
+   </property>
+  </action>
+  <action name="actionSave_as">
+   <property name="text">
+    <string>Save as</string>
+   </property>
+  </action>
+  <action name="actionGenerate_Points">
+   <property name="text">
+    <string>Generate Points</string>
+   </property>
+   <property name="statusTip">
+    <string>Generating points by parameters</string>
+   </property>
+  </action>
+  <action name="actionInsert_And_Move">
+   <property name="text">
+    <string>Insert And Move</string>
+   </property>
+  </action>
+  <action name="actionRemove_By_Irregularity">
+   <property name="text">
+    <string>Remove By Irregularity</string>
+   </property>
+  </action>
+  <action name="actionDownSample">
+   <property name="text">
+    <string>Down Sample</string>
+   </property>
+  </action>
+  <action name="actionTangent_Plane_And_Stem_Axis_Curve">
+   <property name="text">
+    <string>Tangent Plane And Stem Axis Curve</string>
+   </property>
+  </action>
+  <action name="actionPoints_Cluster">
+   <property name="text">
+    <string>Points Cluster</string>
+   </property>
+  </action>
+  <action name="action_BranchesRemovalClusterAndCurvature">
+   <property name="text">
+    <string>Cluster And Curvature</string>
+   </property>
+  </action>
+  <action name="actionSlice_DBScan">
+   <property name="text">
+    <string>DBScan Skeleton</string>
+   </property>
+  </action>
+  <action name="actionDelaunay_Parallel">
+   <property name="text">
+    <string>Delaunay Parallel</string>
+   </property>
+  </action>
+  <action name="actionSimulate_Measure">
+   <property name="text">
+    <string>Simulating Measure</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QVTKWidget</class>
+   <extends>QWidget</extends>
+   <header>QVTKWidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

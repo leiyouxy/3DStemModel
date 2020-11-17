@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PointUnitDialog</class>
+ <widget class="QDialog" name="PointUnitDialog">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>184</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Choose Unit for Opening Point Cloud</string>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>55</x>
+     <y>20</y>
+     <width>301</width>
+     <height>100</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Choose Unit</string>
+   </property>
+   <widget class="QComboBox" name="comboBoxUnit">
+    <property name="geometry">
+     <rect>
+      <x>49</x>
+      <y>54</y>
+      <width>141</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="statusTip">
+     <string>The computing unit is centimeter, please choose unit for opening point cloud</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>49</x>
+      <y>30</y>
+      <width>200</width>
+      <height>12</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Unit for Opening Point Cloud</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QPushButton" name="pushButtonOk">
+   <property name="geometry">
+    <rect>
+     <x>156</x>
+     <y>140</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="statusTip">
+    <string>The computing unit is centimeter, please choose unit for opening point cloud</string>
+   </property>
+   <property name="text">
+    <string>OK</string>
+   </property>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>comboBoxUnit</tabstop>
+  <tabstop>pushButtonOk</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>
