@@ -19,6 +19,10 @@ Please watch the operation [video](https://raw.githubusercontent.com/leiyouxy/3D
 
 If you have any problem, please feel free to contact [us](mailto:leiyou@xynu.edu.cn).
 
+## Source Code
+
+The current version of the 3D stem model is implemented based on C++ with the Point Cloud Library (PCL, 1.8.1), Qt (5.9.6)  and VTK (8.0.0).
+
 ## Related papers
 1. 3D Stem Model Construction with Geometry Consistency using Terrestrial Laser Scanning Data. Lei You, Jianwei Guo, Yong Pang, Shouzheng Tang, Xinyu Song and Xiaopeng Zhang.International Journal of Remote Sensing: DOI: 10.1080/01431161.2020.1811919
 
