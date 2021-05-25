@@ -24,10 +24,12 @@ If you have any problem, please feel free to contact [us](mailto:leiyou@xynu.edu
 The current version of the 3D stem model is implemented based on C++ with the [Point Cloud Library (PCL, 1.8.1)](https://pointclouds.org/), [Qt (5.9.6)](https://www.qt.io/) and [VTK (8.0.0)](https://vtk.org/).
 
 ## Related papers
-1. [3D Stem Model Construction with Geometry Consistency using Terrestrial Laser Scanning Data](https://doi.org/10.1080/01431161.2020.1811919). Lei You, Jianwei Guo, Yong Pang, Shouzheng Tang, Xinyu Song and Xiaopeng Zhang. International Journal of Remote Sensing: 2021, 42(2):714-737. DOI: 10.1080/01431161.2020.1811919
+1. [Comparison of Numerical Calculation Methods for Stem Diameter Retrieval Using Terrestrial Laser Data](https://www.mdpi.com/2072-4292/13/9/1780). Lei You, JieWei, Xiaojun Liang, Minghua Lou, Yong Pang and Xinyu Song. Remote Sensing: 2021; 13(9):1780. https://doi.org/10.3390/rs13091780
 
-2. [Construction of Closed, Global Convexity and G<sup>2</sup> Continuity Curve](http://www.jcad.cn/jcadcms/show.action?code=publish_402880124b362464014b3c4d819803a1&newsid=d88720c81d4c406998d58e7e092e9cc1). Lei You, Yan Feng, Jianwei Guo, Xiaopeng Zhang, Shouzheng Tang, and Xinyu Song. Journal of Computer-Aided Design & Computer Graphics: 2017.
-3. [Precise Measurement of Stem Diameter by Simulating the Path of Diameter Tape from Terrestrial Laser Scanning Data](https://www.mdpi.com/2072-4292/8/9/717). Lei You, Shouzheng Tang, Xinyu Song, Yuancai Lei, Hao Zang, Minghua Lou and Chongyang Zhuang. Remote Sensing: 2016.
+2. [3D Stem Model Construction with Geometry Consistency using Terrestrial Laser Scanning Data](https://doi.org/10.1080/01431161.2020.1811919). Lei You, Jianwei Guo, Yong Pang, Shouzheng Tang, Xinyu Song and Xiaopeng Zhang. International Journal of Remote Sensing: 2021, 42(2):714-737. DOI: 10.1080/01431161.2020.1811919
+
+3. [Construction of Closed, Global Convexity and G<sup>2</sup> Continuity Curve](http://www.jcad.cn/jcadcms/show.action?code=publish_402880124b362464014b3c4d819803a1&newsid=d88720c81d4c406998d58e7e092e9cc1). Lei You, Yan Feng, Jianwei Guo, Xiaopeng Zhang, Shouzheng Tang, and Xinyu Song. Journal of Computer-Aided Design & Computer Graphics: 2017.
+4. [Precise Measurement of Stem Diameter by Simulating the Path of Diameter Tape from Terrestrial Laser Scanning Data](https://www.mdpi.com/2072-4292/8/9/717). Lei You, Shouzheng Tang, Xinyu Song, Yuancai Lei, Hao Zang, Minghua Lou and Chongyang Zhuang. Remote Sensing: 2016.
 
 ---------
 
