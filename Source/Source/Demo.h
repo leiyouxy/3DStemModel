@@ -3,6 +3,7 @@
 #include "TreeBase.h"
 
 #include "GeneratedFiles/ui_Demo.h"
+#include "GeneratedFiles/ui_PlotProcessing.h"
 
 class CDemo : public CTreeBase
 {

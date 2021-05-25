@@ -31,6 +31,7 @@ private:
 	pcl::PointXYZRGB CurrentUpperPoint;
 	pcl::PointXYZRGB CurrentNormal;
 	pcl::PointCloud<pcl::PointXYZRGB>::Ptr CalcingStemPoints;
+	pcl::PointCloud<pcl::PointXYZRGB>::Ptr CopyCalcingStemPoints;
 		
 	pcl::PointCloud<pcl::PointXYZRGB>::Ptr SplineFittingPoints;	
 	pcl::PointCloud<pcl::PointXYZRGB>::Ptr BezierFittingPoints;
@@ -39,6 +40,7 @@ private:
 
 	//CStemDiameter StemDiameter;
 	CStemDiameterAndProfileCurveBasalArea StemDiameter;
+	bool IsBat;
 signals:
 	 
 public Q_SLOTS:
@@ -69,6 +71,9 @@ public Q_SLOTS:
 	void CalcingStemParameters();
 
 	void CalcingBasalArea();
+
+	//2021.02.02 Bat 方式获取Slice
+	void BatGetSlice();
 public:
 	CStemDiameterAndBasalRetrieval();
 	CStemDiameterAndBasalRetrieval(QGroupBox * ParentWin);

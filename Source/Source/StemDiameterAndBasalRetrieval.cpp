@@ -82,6 +82,53 @@ void CStemDiameterAndBasalRetrieval::ShowStemAxisCurvePoints(int CheckValue)
 	}
 }
 
+//2021.02.02 Bat 方式获取Slice
+void CStemDiameterAndBasalRetrieval::BatGetSlice()
+{
+	char Drive[_MAX_DRIVE];
+	char FilePath[_MAX_DIR];
+	char Fname[_MAX_FNAME];
+	char Ext[_MAX_EXT];
+	_splitpath(OpenedFilePath.c_str(), Drive, FilePath, Fname, Ext);
+	IsBat = true;
+	string FilePathStr;
+	FilePathStr = string(Drive) + string(FilePath);
+	string TxtFileName = FilePathStr + "DBH\\DBHHeight.txt";
+		
+	vector<string> Strs;
+	ReadFileToStrings(TxtFileName, Strs);
+
+	for (int i = 0; i < Strs.size(); i++)
+	{
+		int FindIndex = Strs[i].find(" ");
+		OpenedFilePath = FilePathStr + Strs[i].substr(0, FindIndex) + ".pcd";
+		string RightStr = Strs[i].substr(FindIndex + 1, Strs[i].length() - FindIndex);
+		
+		FindIndex = RightStr.find(" ");
+		string HValue = RightStr.substr(0, FindIndex);				
+		int HeightStep = -30;
+
+		PointBase::OpenPCLFile(OpenedFilePath, CTreeBase::InputCloud, true);
+		CTreeBase::SetInputCloud(CTreeBase::InputCloud);
+
+		RefreshData();
+		StemDiameterAndBasalRetrievalForm.spinBoxStemHeight->setValue(
+			QString::fromStdString(HValue).toDouble() + HeightStep);
+		emitUpdateAppTitle(OpenedFilePath);
+		emitUpdateUI();			
+
+		cout << "OpenedFilePath:" << OpenedFilePath << endl;
+		cout << "HValue:" << StemDiameterAndBasalRetrievalForm.spinBoxStemHeight->text().toStdString() << endl;
+
+		StemAxisCurveConstruct();
+		StemDiameterAndBasalRetrievalForm.spinBoxStemHeight->setValue(
+			QString::fromStdString(HValue).toDouble() + HeightStep);
+		ChangeCalcPosition();
+		SaveCalcingStemPoints();
+	}
+	IsBat = false;
+}
+
 CStemDiameterAndBasalRetrieval::CStemDiameterAndBasalRetrieval()
 {
 
@@ -91,7 +138,7 @@ CStemDiameterAndBasalRetrieval::CStemDiameterAndBasalRetrieval(QGroupBox * Paren
 {
 	QWidget *widget = new QWidget(ParentWin);
 	StemDiameterAndBasalRetrievalForm.setupUi(widget);
-	
+	IsBat = false;
 	connect(StemDiameterAndBasalRetrievalForm.checkBoxVerticalSlices, 
 		SIGNAL(stateChanged(int)), this, SLOT(ShowSlicesPoints(int)));
 	connect(StemDiameterAndBasalRetrievalForm.doubleSpinBoxThickNess,
@@ -130,6 +177,9 @@ CStemDiameterAndBasalRetrieval::CStemDiameterAndBasalRetrieval(QGroupBox * Paren
 		this, SLOT(ResetForm()));
 	connect(StemDiameterAndBasalRetrievalForm.spinBoxStemLength, SIGNAL(valueChanged(double)),
 		this, SLOT(ResetForm()));
+	
+	connect(StemDiameterAndBasalRetrievalForm.pushButtonBat,
+		SIGNAL(clicked()), this, SLOT(BatGetSlice()));
 
 	StemDiameterAndBasalRetrievalForm.groupBox_Parameter->setEnabled(false);
 	StemDiameterAndBasalRetrievalForm.groupBox_ParameterRetrieval->setEnabled(false);
@@ -144,6 +194,7 @@ CStemDiameterAndBasalRetrieval::CStemDiameterAndBasalRetrieval(QGroupBox * Paren
 	widget->show();
 
 	CalcingStemPoints.reset(new pcl::PointCloud<pcl::PointXYZRGB>);
+	CopyCalcingStemPoints.reset(new pcl::PointCloud<pcl::PointXYZRGB>);
 	BezierFittingPoints.reset(new pcl::PointCloud<pcl::PointXYZRGB>);
 	SplineFittingPoints.reset(new pcl::PointCloud<pcl::PointXYZRGB>);
 	ProfileCurvePoints.reset(new pcl::PointCloud<pcl::PointXYZRGB>);
@@ -152,6 +203,7 @@ CStemDiameterAndBasalRetrieval::CStemDiameterAndBasalRetrieval(QGroupBox * Paren
 CStemDiameterAndBasalRetrieval::~CStemDiameterAndBasalRetrieval()
 {
 	CalcingStemPoints->points.clear();
+	CopyCalcingStemPoints->points.clear();
 	BezierFittingPoints->points.clear();
 	SplineFittingPoints->points.clear();
 	ProfileCurvePoints->points.clear();
@@ -181,12 +233,16 @@ void CStemDiameterAndBasalRetrieval::StemAxisCurveConstruct()
 	ProfileCurvePoints->points.clear();
 
 	emitUpdateStatusBar("Stem axis curve is constructing, please wait!");
+	//StemSkeleton;
 	StemSkeleton.SetInputs(InputCloud,
 		StemDiameterAndBasalRetrievalForm.doubleSpinBoxThickNess->text().toDouble(),
 		StemDiameterAndBasalRetrievalForm.checkBoxSmoothing->checkState() == 2, 
 		StemDiameterAndBasalRetrievalForm.spinBoxNumbersforStemSegment->text().toInt(),
 		abs(ZMax-ZMin) / StemDiameterAndBasalRetrievalForm.doubleSpinBoxThickNess->text().toDouble() / 3.0,
-		StemDiameterAndBasalRetrievalForm.doubleSpinBoxIncludeAnlgeValue->text().toDouble());
+		StemDiameterAndBasalRetrievalForm.doubleSpinBoxIncludeAnlgeValue->text().toDouble(),
+		StemDiameterAndBasalRetrievalForm.doubleSpinBoxMaxHeight->text().toDouble());
+	
+	//emitUpdateUI();
 	
 	if (!StemSkeleton.IsSuitForConstruct())
 	{
@@ -205,7 +261,8 @@ void CStemDiameterAndBasalRetrieval::StemAxisCurveConstruct()
 		}
 	}
 
-	StemSkeleton.ConstructStemSplineCurve();	
+	StemSkeleton.ConstructStemSplineCurve(
+		StemDiameterAndBasalRetrievalForm.doubleSpinBoxStartHeight->text().toDouble());
 
 	//if (StemSkeleton.ResultStr != "Done")
 	//	QMessageBox::information(NULL, tr("Information"),
@@ -214,7 +271,7 @@ void CStemDiameterAndBasalRetrieval::StemAxisCurveConstruct()
 	StemHeight = StemSkeleton.StemSkeletonSpline.GetSplineHeight();
 	StemLength = StemSkeleton.StemSkeletonSpline.GetSplineLengthBySimpson();
 
-	PointsMove(StemSkeleton.StemSkeletonSpline.CurvePoints, 50, 0, 0);
+	//PointsMove(StemSkeleton.StemSkeletonSpline.CurvePoints, 50, 0, 0);
 
 	if (StemDiameterAndBasalRetrievalForm.checkBoxShowAxisCurve->checkState() == 2)
 	{
@@ -372,14 +429,38 @@ void CStemDiameterAndBasalRetrieval::SaveCalcingStemPoints()
 {
 	if (CalcingStemPoints->points.size() == 0) return;
 	
-	QString FileName = QFileDialog::getSaveFileName(NULL,
-		tr("Point Cloud Files"), "3DStemModelForMeasure", tr("Point Cloud Files (*.pcd)"));
-	if (FileName.length() > 0)
-	{
-		emitUpdateStatusBar("File is being saving, please wait!", 0);
-		PointBase::SavePCDToFileName(CalcingStemPoints, FileName.toStdString());
-		emitUpdateStatusBar("File has been saved!", 3000);
-	}
+	//QString FileName = QFileDialog::getSaveFileName(NULL,
+	//	tr("Point Cloud Files"), "3DStemModelForMeasure", tr("Point Cloud Files (*.pcd)"));
+	
+	char Drive[_MAX_DRIVE];
+	char FilePath[_MAX_DIR];
+	char Fname[_MAX_FNAME];
+	char Ext[_MAX_EXT];
+	_splitpath(OpenedFilePath.c_str(), Drive, FilePath, Fname, Ext);
+	OpenedFileName = Fname;
+
+	pcl::PointCloud<pcl::PointXYZRGB>::Ptr RotatedCalcingStemPoints(new pcl::PointCloud<pcl::PointXYZRGB>());
+	GeometryBase::RotateNormalToVertical(CopyCalcingStemPoints, RotatedCalcingStemPoints, CurrentNormal);
+
+	string FilePathStr;
+	FilePathStr = string(Drive) + string(FilePath);
+
+	string TempFileName = FilePathStr + "DBH\\" + OpenedFileName + ".pcd";
+	cout << "TempFileName:" << TempFileName << endl;
+	PointBase::SavePCDToFileName(RotatedCalcingStemPoints, TempFileName);
+
+	string TempDBHHeight = OpenedFileName + " " 
+		+ StemDiameterAndBasalRetrievalForm.spinBoxStemHeight->text().toStdString()
+		+ " " + StringBase::DateStr();	
+	if (!IsBat)
+		SaveStringToFile(FilePathStr + "DBH\\DBHHeight.txt", TempDBHHeight);
+	
+	//if (FileName.length() > 0)
+	//{
+	//	emitUpdateStatusBar("File is being saving, please wait!", 0);
+	//	PointBase::SavePCDToFileName(RotatedCalcingStemPoints, FileName.toStdString());
+	//	emitUpdateStatusBar("File has been saved!", 3000);
+	//}
 }
 
 void CStemDiameterAndBasalRetrieval::CalcingStemParameters()
@@ -427,9 +508,10 @@ void CStemDiameterAndBasalRetrieval::CalcingStemParameters()
 	GeometryBase::GetPointsBetweenTwoPlanes(InputCloud, CurrentNormal.x, CurrentNormal.y, CurrentNormal.z, d1,
 		CurrentNormal.x, CurrentNormal.y, CurrentNormal.z, d2, CalcingStemPoints);
 
+	PointBase::PointCopy(CalcingStemPoints, CopyCalcingStemPoints);
 	PointBase::SetPointColor(CalcingStemPoints, ColorBase::RedColor);
-	//ShowPoints(CalcingStemPoints, CalcingStemPointsStr, PointSize);
-	
+	//ShowPoints(CalcingStemPoints, CalcingStemPointsStr, PointSize);	
+
 	StemDiameter.SetInputCloud(CalcingStemPoints, CurrentPoint, CurrentNormal);
 	StemDiameterAndBasalRetrievalForm.lineEditDCircleFitting->setText(
 		QString::number(StemDiameter.DRetrievalByCircleFittingIn2D(), 10, 4));

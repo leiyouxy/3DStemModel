@@ -381,7 +381,7 @@ void CStemPointsRemovalByPlane::Bat()
 	string FilePathStr;
 	FilePathStr = string(Drive) + string(FilePath);
 	vector<string> BatFiles;
-	GetFiles(FilePath, BatFiles);
+	GetFiles(FilePathStr, BatFiles);
 
 	for each (string FileNameStr in BatFiles)
 	{

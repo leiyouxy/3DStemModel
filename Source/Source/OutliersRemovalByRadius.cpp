@@ -679,17 +679,20 @@ void COutliersRemovalByRadius::Bat()
 	string FilePathStr;
 	FilePathStr = string(Drive) + string(FilePath);
 	vector<string> BatFiles;
-	GetFiles(FilePath, BatFiles);
+	//GetFiles(FilePath, BatFiles);
+	GetFiles(FilePathStr, BatFiles);
 
 	for each (string FileNameStr in BatFiles)
 	{
+		cout<<"Current File Name:" << FileNameStr <<endl;
 		_splitpath(FileNameStr.c_str(), Drive, FilePath, Fname, Ext);
 		if ((strcmp(Ext, ".pcd") == 0) || (strcmp(Ext, ".vtx") == 0) || (strcmp(Ext, ".las") == 0))
-		{
+		{			
 			OpenedFilePath = FilePathStr + FileNameStr;
+			string SaveFileName = FilePathStr + "OutliersRemoved\\" + FileNameStr;
 
 			InputCloud->points.clear();
-			PointBase::OpenPCLFile(OpenedFilePath, InputCloud);
+			PointBase::OpenPCLFile(OpenedFilePath, InputCloud, false);
 			CTreeBase::SetInputCloud(CTreeBase::InputCloud);
 
 			RefreshData();
@@ -699,13 +702,14 @@ void COutliersRemovalByRadius::Bat()
 			CheckingOutliers();
 			RemoveOutliers();
 
-			CheckingOutliers();
-			RemoveOutliers();
+			//CheckingOutliers();
+			//RemoveOutliers();
 
-			CheckingOutliers();
-			RemoveOutliers();
+			//CheckingOutliers();
+			//RemoveOutliers();
 			
-			PointBase::SavePCDToFileName(InputCloud, OpenedFilePath);
+			//PointBase::SavePCDToFileName(InputCloud, OpenedFilePath);
+			PointBase::SavePCDToFileName(InputCloud, SaveFileName);
 		}
 	}
 	SubuiOfOutliersRemoval.pushButtonBat->setEnabled(true);

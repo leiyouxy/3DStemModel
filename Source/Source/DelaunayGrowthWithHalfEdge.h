@@ -122,8 +122,7 @@ protected:
 	//2020.05.26 在带扩展列表中寻找是否
 	int FindEdgeinEdges(V_HE_Edge HE_Edges, HE_Edge Base_Edge);	
 
-	//2020.05.26 边（TempStartIndex至TempEndIndex）是否在HE_Edges中
-	int FindEdgeinEdges(V_HE_Edge HE_Edges, int TempStartIndex, int TempEndIndex);
+
 
 	int GetTempIndexFromCopyIndexCloud(int Index);
 
@@ -147,10 +146,13 @@ public:
 
 	void SetInputCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr PointPtr);	
 
+	//2020.05.26 边（TempStartIndex至TempEndIndex）是否在HE_Edges中
+	int FindEdgeinEdges(V_HE_Edge HE_Edges, int TempStartIndex, int TempEndIndex);
+
 	//基于优先点的构网
 	void performReconstructionWithPriority();
 		
-	//设置边界边 2020.05.26
+	//设置边界边 2020.05.26 边界边的方向是所在三角网的方向，其逆向边不扩展
 	void SetOuterBorderEdges(V_HE_Edge BorderEdgesValue);
 
 	//输出

@@ -51,6 +51,7 @@
 #include "Source/BranchesClassficationByDBScan.h"
 #include "Source/DelaunayParallel.h"
 #include "Source/SimulatingMeasure/SimulateMeasure.h"
+#include "Source/PlotProcessing.h"
 
 #include <direct.h>
 
@@ -86,6 +87,7 @@ public:
 	~TreePclQtGui();
 	
 	int PointSize;
+	char FName[_MAX_FNAME];
 signals:
 	void UpdateUI();
 	void UpdateStatus(QString, int);
@@ -169,6 +171,10 @@ public Q_SLOTS:
 	void GeneratePoints();
 
 	void OpenAndInsert_And_Move();
+
+	void SaveSurface(); //2021.01.03
+
+	void PlotProc(); //2021.01.20
 protected:
 	boost::shared_ptr<pcl::visualization::PCLVisualizer> Viewer;
 	

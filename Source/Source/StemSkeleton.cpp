@@ -2,7 +2,7 @@
 
 void CStemSkeleton::SetInputs(pcl::PointCloud<pcl::PointXYZRGB>::Ptr StemCloudValue,
 	float SectionThickNessValue, bool IsOptimizedValue, int CalcSectionNumbersValue, int StartIndexValue,
-	int TheIncludedAngleValue)
+	int TheIncludedAngleValue, double MaximumHeightValue)
 {
 	StemCloud = StemCloudValue;	
 	SectionThickNess = SectionThickNessValue;
@@ -10,6 +10,13 @@ void CStemSkeleton::SetInputs(pcl::PointCloud<pcl::PointXYZRGB>::Ptr StemCloudVa
 	StartIndex = StartIndexValue;
 	IsOptimized = IsOptimizedValue;
 	TheIncludedAngle = TheIncludedAngleValue;
+	
+	//PointBase::PointMoveToOrigin(StemCloud);
+
+	if (MaximumHeightValue > 0)
+		MaximumHeight = MaximumHeightValue;
+	else
+		MaximumHeight = EPSP6;
 
 	HorizontalPartition.SetInputCloud(StemCloud);
 	HorizontalPartition.SetThickNess(SectionThickNess);
@@ -44,6 +51,7 @@ pcl::PointXYZRGB CStemSkeleton::GetInitialVector()
 
 		CentroidPoints->points.push_back(HorizontalPartition.GeometryCenterPointsPtr->points[i]);		
 	}
+
 	LastNormal = GeometryBase::GetMaxDirectionVector(CentroidPoints);
 	if (2 + CalcSectionNumbers < CentroidPoints->points.size())
 		CentroidPoints->points.erase(CentroidPoints->points.begin() + 2, CentroidPoints->points.begin() + 2 + CalcSectionNumbers);
@@ -61,8 +69,7 @@ pcl::PointXYZRGB CStemSkeleton::GetInitialVector()
 		pcl::PointXYZRGB Centroid;
 		GetSlicePoints(LastNormal, TempSlicesPoints, Centroid);
 		CentroidPoints->points.push_back(Centroid);
-		TempVectorPoints->points.push_back(Centroid);
-		
+		TempVectorPoints->points.push_back(Centroid);		
 	}
 	CurrentNormal = GeometryBase::GetMaxDirectionVector(TempVectorPoints);	
 
@@ -89,12 +96,14 @@ pcl::PointXYZRGB CStemSkeleton::GetInitialVector()
 			
 			if (!(i >= 0 && i < HorizontalPartition.SectionsVector.size()))
 				break;
-
+			
 			GetSlicePoints(LastNormal, TempSlicesPoints, Centroid);
+			//PointBase::SavePCDToFileName(TempSlicesPoints, "I:\\TempSlicesPoints.pcd");
 			CentroidPoints->points.push_back(Centroid);
 			TempVectorPoints->points.push_back(Centroid);
 		}
-		CurrentNormal = GeometryBase::GetMaxDirectionVector(TempVectorPoints);		
+		CurrentNormal = GeometryBase::GetMaxDirectionVector(TempVectorPoints);
+		//PointBase::SavePCDToFileName(TempVectorPoints, "I:\\TempVectorPoints.pcd");
 
 		Anlge = 180 * GeometryBase::AngleOfTwoVector(LastNormal.x, LastNormal.y, LastNormal.z, CurrentNormal.x, CurrentNormal.y, CurrentNormal.z) / M_PI;
 
@@ -218,6 +227,13 @@ void CStemSkeleton::GetSkeletonPointS()
 
 		GetSlicePoints(TempNomral, TempPoints, SliceCentroidPoint);
 		i++;
+
+		//达到指定高度则退出
+		if (abs(SliceCentroidPoint.z - CentroidPoints->points[0].z) > MaximumHeight)
+		{
+			cout<<"到达指定高度，退出树干骨架点的计算"<<endl;
+			break;
+		}
 	}
 
 	TempNomral = InitialNormalPoint;
@@ -258,6 +274,13 @@ void CStemSkeleton::GetSkeletonPointS()
 
 		GetSlicePoints(TempNomral, TempPoints, SliceCentroidPoint, false);
 		i++;
+
+		//达到指定高度则退出
+		if (abs(SliceCentroidPoint.z - CentroidPoints->points[0].z) > MaximumHeight)
+		{
+			cout << "到达指定高度，退出树干骨架点的计算" << endl;
+			break;
+		}
 	}
 	//*/
 }
@@ -453,13 +476,17 @@ pcl::PointXYZRGB CStemSkeleton::GetCentroidOfPointsInSpaces(
 	pcl::PointCloud<pcl::PointXYZRGB>::Ptr OutPoints (new pcl::PointCloud<pcl::PointXYZRGB>);	
 
 	GeometryBase::RotateNormalToVertical(InPoints, PlanePoints, NormalPoint);
+	//PointBase::SavePCDToFileName(InPoints, "I:\\InPlanePoints.pcd");
 	
 	pcl::PointXYZRGB TempCentriod = GeometryBase::GetCentroidOfPoints(PlanePoints);	
 	
 	IsCircle = PlanePointsIsCircle(PlanePoints, TempCentriod);
 
 	PlanePoints->points.push_back(TempCentriod);		
+	//PointBase::SavePCDToFileName(PlanePoints, "I:\\PlanePoints.pcd");
 	GeometryBase::RotateToOriginal(PlanePoints, OutPoints, NormalPoint, true);
+
+	//PointBase::SavePCDToFileName(OutPoints, "I:\\OutPoints_PlanePoints.pcd");
 
 	return OutPoints->points[OutPoints->points.size()-1];	
 }
@@ -484,16 +511,21 @@ bool CStemSkeleton::PlanePointsIsCircle(pcl::PointCloud<pcl::PointXYZRGB>::Ptr I
 }
 
 //构建树干中心点的样条曲线  2016.04.06
-void CStemSkeleton::ConstructStemSplineCurve(bool IsDirect)
+void CStemSkeleton::ConstructStemSplineCurve(double StartHeight, bool IsDirect)
 {
 	if (StemCloud->points.size() == 0) return;
+
+	CentroidPoints->points.clear();
+	OptimizedCentroidPoints->points.clear();
+	StemSkeletonPoints->points.clear();
+	AllProfilecurvePoints->points.clear();
 
 	CSplineInterpolation SplineInterpolation;
 	
 	if (!IsDirect)	//重新获取树干骨架点
 	{
-		//2018.10.24 如果树高不足100CM时,就从中间位置开始
-		StartIndex = 100 / HorizontalPartition.SectionThickness - 1;
+		//2018.10.24 如果树高不足StartHeightCM时,就从中间位置开始
+		StartIndex = StartHeight / HorizontalPartition.SectionThickness - 1;
 
 		if (StartIndex > HorizontalPartition.SectionsVector.size() - CalcSectionNumbers)
 			StartIndex = HorizontalPartition.SectionsVector.size() / 2;
@@ -518,6 +550,8 @@ void CStemSkeleton::ConstructStemSplineCurve(bool IsDirect)
 			GetSkeletonPointS();	
 		}
 	}
+
+	cout<<"轮廓点已经选取"<<endl;
 
 	pcl::PointCloud<pcl::PointXYZRGB>::Ptr TempPoints (new pcl::PointCloud<pcl::PointXYZRGB>); 
 
@@ -560,6 +594,8 @@ void CStemSkeleton::ConstructStemSplineCurve(bool IsDirect)
 	pcl::PointCloud<pcl::PointXYZRGB>::Ptr ControlPoints (new pcl::PointCloud<pcl::PointXYZRGB>);
 	vector<double> KnoteVector;				
 	SplineInterpolation.GetControlPointsAndKnotValue(ControlPoints, KnoteVector);
+
+	cout << "控制点已经计算完成！" << endl;
 
 	StemSkeletonSpline.SetSplineInputs(ControlPoints, 3, KnoteVector, false);	
 	StemSkeletonSpline.CreateSpline();

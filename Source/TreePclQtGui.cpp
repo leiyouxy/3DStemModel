@@ -1,5 +1,6 @@
 #include "TreePclQtGui.h"
 
+
 TreePclQtGui * TreePclQtGui::p_Self;
 
 //it does not work;
@@ -225,6 +226,7 @@ TreePclQtGui::TreePclQtGui(QWidget *parent)
 	//InitialpcdFileName = "3DStemModelForMeasure\\A2015111401_4Stem_0_100_Tip.pcd";	
 	//InitialpcdFileName = "3DStemModelForMeasure\\A2015111401_4Stem_0_350_New.pcd";
 	//InitialpcdFileName = "pcdDemo\\A2015111401_4Stem_0_250.pcd";
+
 	//InitialpcdFileName = "pcdDemo\\Refine0.pcd";
 	//InitialpcdFileName = "pcdDemo\\StemCone.pcd";
 	//OpenedFilePath = AppPath + "\\" + "pcdDemo\\Demo.pcd";	
@@ -245,10 +247,21 @@ TreePclQtGui::TreePclQtGui(QWidget *parent)
 	OpenedFilePath = "I:\\PlanePoints\\Rectangle30000.pcd";
 	OpenedFilePath = "I:\\3DStemModel\\1740_001Stem.vtx";
 	OpenedFilePath = "I:\\000Comparsion\\Final\\1740_001Stem_Data_3.vtx";
-	OpenedFilePath = "I:\\000Comparsion\\Final\\A2015111403_NewStem_0_1200_New_Data_0.vtx";	
+	OpenedFilePath = "I:\\000Comparsion\\Final\\A2015111403_NewStem_0_1200_New_Data_0.vtx";	//Paper Used
 
 	OpenedFilePath = "E:\\20180623-20180704DaGuJiaScans\\PCLOutPut\\20201027_1776_Tree41.vtx";
 	OpenedFilePath = "I:\\000Comparsion\\FinalSlice20201109\\1728_002_Stem_Data_0_10.vtx";
+
+	OpenedFilePath = "I:\\3DStemVolumePoint\\StemVolumePaperUsed\\Length1M\\File1\\1728_003_Stem30_130_0_100.vtx";
+
+	OpenedFilePath = "I:\\ply\\Temp2494.pcd";
+
+	OpenedFilePath = "I:\\PointBenchMark\\EvoTLS2014\\Stem_points\\stempoints_tree26.xyz";
+	//OpenedFilePath = "J:\\PCLOutPut\\1778PlotTrees\\1778Plot_1_150_1.pcd";
+	OpenedFilePath = "J:\\PCLOutPut\\1778PlotTrees\\OutliersRemoved\\StemAfterOutliersRemoved\\1778Plot_2_150_2.pcd";
+	OpenedFilePath = "J:\\Slices\\DBHSlices\\1750Plot_01_150_01.pcd";
+
+	//OpenedFilePath = "pcdDemo\\A2015111401_4Stem_0_350_New.pcd";
 
 	//OpenedFilePath = "I:\\PlanePoints\\Circle1000.pcd";
 	//OpenedFilePath = "I:\\PlanePoints\\PaperUsed700.pcd";
@@ -262,6 +275,7 @@ TreePclQtGui::TreePclQtGui(QWidget *parent)
 	//OpenedFilePath = "I:\\3DStemModelForMeasure\\A2015111401_4Stem_0_360.pcd";
 
 	//OpenedFilePath = "pcdDemo\\StemCone.pcd";
+	OpenedFilePath = "pcdDemo\\PaperUsed700.pcd";
 
 	this->setWindowTitle(QObject::tr((AppTitle + string("--") + OpenedFilePath).c_str()));
 
@@ -332,6 +346,11 @@ TreePclQtGui::TreePclQtGui(QWidget *parent)
 	connect(Mainui.action_StemDiameterAndBasalArea, SIGNAL(triggered()), this, SLOT(StemDiameterAndBasalRetrieval()));
 	connect(Mainui.actionSlice_DBScan, SIGNAL(triggered()), this, SLOT(BranchesClassficationSliceDBScan()));
 	
+	connect(Mainui.actionSave_Surface, SIGNAL(triggered()), this, SLOT(SaveSurface()));
+
+	//2021.01.20 Plot Processing
+	connect(Mainui.actionPlotProc, SIGNAL(triggered()), this, SLOT(PlotProc()));
+
 	//Status Bar
 
 	//stem points removal by plane
@@ -356,9 +375,18 @@ TreePclQtGui::TreePclQtGui(QWidget *parent)
 	PointSize = 2;
 	//ShowPointRenderingSetting();
 
-	//ShowDelaunayParallelForm();
+	ShowDelaunayParallelForm();				//2021.05.19
 
-	ShowSimulateMeasureForm();
+	//StemDiameterAndBasalRetrieval();
+
+	//ShowSimulateMeasureForm();			//2020.12.31
+
+	//PlotProc();
+
+	//StemVolumeCalculationByVerticalSlices();  //2020.12.31
+
+	//TreeStubRemoval();
+
 }
 
 void TreePclQtGui::ShowPointRenderingSetting()
@@ -412,6 +440,13 @@ void TreePclQtGui::ShowSimulateMeasureForm()
 		return;
 	}
 
+	char Drive[_MAX_DRIVE];
+	char FilePath[_MAX_DIR];
+	char FName[_MAX_FNAME];
+	char Ext[_MAX_EXT];
+	_splitpath(OpenedFilePath.c_str(), Drive, FilePath, FName, Ext);
+	//p_TreeBase->FileName = FName;
+
 	RemoveGroupBoxItems();
 	p_TreeBase.reset(new CSimulateMeasure(Mainui.groupBox));
 	p_TreeBase->p_TreePclQtGui = this;
@@ -419,6 +454,7 @@ void TreePclQtGui::ShowSimulateMeasureForm()
 	p_TreeBase->SetViewer(Viewer);
 	p_TreeBase->PointSize = PointSize;
 	p_TreeBase->OpenedFilePath = OpenedFilePath;
+	p_TreeBase->OpenedFileName = FName;
 	Mainui.groupBox->setTitle(tr("Simulating Measure Form"));
 }
 
@@ -431,12 +467,21 @@ void TreePclQtGui::ShowDemoForm()
 		return;
 	}
 
+	char Drive[_MAX_DRIVE];
+	char FilePath[_MAX_DIR];
+	char FName[_MAX_FNAME];
+	char Ext[_MAX_EXT];
+	_splitpath(OpenedFilePath.c_str(), Drive, FilePath, FName, Ext);
+	//p_TreeBase->FileName = FName;
+
 	RemoveGroupBoxItems();
 	p_TreeBase.reset(new CDemo(Mainui.groupBox));
 	p_TreeBase->p_TreePclQtGui = this;
 	p_TreeBase->SetInputCloud(TreeStemCloud);
 	p_TreeBase->SetViewer(Viewer);
 	p_TreeBase->PointSize = PointSize;
+	p_TreeBase->OpenedFilePath = OpenedFilePath;
+	p_TreeBase->OpenedFileName = FName;
 	Mainui.groupBox->setTitle(tr("Demo Class and Form"));
 }
 
@@ -449,12 +494,21 @@ void TreePclQtGui::ShowClusterForm()
 		return;
 	}
 
+	char Drive[_MAX_DRIVE];
+	char FilePath[_MAX_DIR];
+	char FName[_MAX_FNAME];
+	char Ext[_MAX_EXT];
+	_splitpath(OpenedFilePath.c_str(), Drive, FilePath, FName, Ext);
+	//p_TreeBase->FileName = FName;
+
 	RemoveGroupBoxItems();
 	p_TreeBase.reset(new CCluster(Mainui.groupBox));
 	p_TreeBase->p_TreePclQtGui = this;
 	p_TreeBase->SetInputCloud(TreeStemCloud);
 	p_TreeBase->SetViewer(Viewer);
 	p_TreeBase->PointSize = PointSize;
+	p_TreeBase->OpenedFilePath = OpenedFilePath;
+	p_TreeBase->OpenedFileName = FName;
 	Mainui.groupBox->setTitle(tr("Cluster For Points"));
 }
 
@@ -519,18 +573,21 @@ void TreePclQtGui::OpenCloudByFile(QString FileName)
 {		
 	if (FileName.size() == 0)
 		FileName = QFileDialog::getOpenFileName(this,
-		tr("Point Cloud Files"), OpenedFilePath.c_str(), tr("Point Cloud Files (*.pcd *.las *.xyz *.vtx *.ply)"));	
+		tr("Point Cloud Files"), OpenedFilePath.c_str(), 
+			tr("Point Cloud Files (*.pcd *.las *.xyz *.vtx *.ply)"));	
 
 	if (FileName.length() <= 0)
 		return;
 
 	TreeStemCloud->points.clear();
+	TreeStemCloud.reset(new pcl::PointCloud<pcl::PointXYZRGB>());
+
 	SetStatusText("File is opening, please wait!", 0);
 	Viewer->removeAllPointClouds();
 	Viewer->removeAllShapes();
 
 	OpenedFilePath = string((const char *)FileName.toLocal8Bit());
-	PointBase::OpenPCLFile(OpenedFilePath, TreeStemCloud);
+	PointBase::OpenPCLFile(OpenedFilePath, TreeStemCloud, false);
 
 	if(TreeStemCloud->points.size() > 0)
 	{
@@ -541,12 +598,18 @@ void TreePclQtGui::OpenCloudByFile(QString FileName)
 	this->setWindowTitle(QObject::tr((AppTitle + string("--") + OpenedFilePath).c_str()));	
 	SetStatusText("File has been opened! Points number:" + QString::number(TreeStemCloud->points.size()), 3000);
 
+	char Drive[_MAX_DRIVE];
+	char FilePath[_MAX_DIR];
+	char Ext[_MAX_EXT];
+	_splitpath(OpenedFilePath.c_str(), Drive, FilePath, FName, Ext);
+
 	//New point cloud, p_TreeBase should refresh data. Invoking RefreshData function of sub class.
 	if (p_TreeBase != NULL)
 	{
 		p_TreeBase->SetInputCloud(TreeStemCloud);
 		p_TreeBase->SetViewer(Viewer);
 		p_TreeBase->OpenedFilePath = OpenedFilePath;
+		p_TreeBase->OpenedFileName = FName;
 		p_TreeBase->ShowPoints(TreeStemCloud, TreeStemCloudStr);
 		Viewer->resetCamera();
 		p_TreeBase->RefreshData();
@@ -579,7 +642,7 @@ void TreePclQtGui::SaveAsCloudtoFile()
 	QString FileName = QFileDialog::getSaveFileName(this,
 		tr("Point Cloud Files"), OpenedFilePath.c_str(), 
 		//tr("Point Cloud Files (*.pcd);; XYZ Files(*.xyz);; VTX Files(*.vtx);;  LAS Files(*.las)")); //las is not workable
-		tr("Point Cloud Files (*.pcd);; XYZ Files(*.xyz);; VTX Files(*.vtx);; PLY Files(*.ply)"));
+		tr("Point Cloud Files (*.pcd);; XYZ Files(*.xyz);; VTX Files(*.vtx);; PLY Files(*.ply);;  LAS Files(*.las)"));
 	
 	if (FileName.length() > 0)
 	{
@@ -823,32 +886,41 @@ void TreePclQtGui::StemDiameterAndBasalRetrieval()
 	RemoveGroupBoxItems();
 	Mainui.groupBox->setTitle(tr("Stem Diameter and Basal Area Retrieval"));
 
+	char Drive[_MAX_DRIVE];
+	char FilePath[_MAX_DIR];
+	char FName[_MAX_FNAME];
+	char Ext[_MAX_EXT];
+	_splitpath(OpenedFilePath.c_str(), Drive, FilePath, FName, Ext);
+
 	p_TreeBase.reset(new CStemDiameterAndBasalRetrieval(Mainui.groupBox));
 	p_TreeBase->p_TreePclQtGui = this;
 	p_TreeBase->SetInputCloud(TreeStemCloud);
 	p_TreeBase->SetViewer(Viewer);
+	p_TreeBase->OpenedFilePath = OpenedFilePath;
+	p_TreeBase->OpenedFileName = FName;
 	p_TreeBase->PointSize = PointSize;
 }
 
 void TreePclQtGui::StemVolumeCalculationByVerticalSlices()
 {
 	if (TreeStemCloud->points.size() == 0)
-	{
+	{		
 		QMessageBox::information(this, tr("Information"),
 			tr("No points to opeate, please open a point cloud file first!"));
 		return;
 	}
 
 	RemoveGroupBoxItems();
-
-	QAction * Action = (QAction *)sender();
-	if (Action == NULL) return;
 	string Type = "";
+
+	/*  //2020.12.31 ×¢ÊÍµô
+	QAction * Action = (QAction *)sender();
+	if (Action == NULL) return;	
 
 	if (Action->objectName() == "actionStemVolumeByVerticalSlices")
 	{
 		Mainui.groupBox->setTitle(tr("Volume Calculation"));		
-	}
+	}*/
 	//else if (Action->objectName() ==  "actionProfile_Curve_of_Vertical_slices_calculation")
 	//{
 	//	Mainui.groupBox->setTitle(tr("Volume Calculation by Profile Curve of Vertical Slices"));
@@ -930,4 +1002,23 @@ void TreePclQtGui::OpenAndInsert_And_Move()
 	TreeStemCloud->points.insert(TreeStemCloud->points.end(),
 		TempPoints->points.begin(), TempPoints->points.end());
 	UpdateCloudAndUI();
+}
+
+void TreePclQtGui::SaveSurface() //2021.01.03
+{
+	//PointBase::SaveMeshToPLY()
+}
+
+void TreePclQtGui::PlotProc() //2021.01.20
+{
+	RemoveGroupBoxItems();
+	Mainui.groupBox->setTitle(tr("Plot data processing"));
+
+	p_TreeBase.reset(new CPlotProcessing(Mainui.groupBox));
+	p_TreeBase->p_TreePclQtGui = this;
+	p_TreeBase->SetInputCloud(TreeStemCloud);
+	p_TreeBase->SetViewer(Viewer);
+	p_TreeBase->OpenedFilePath = OpenedFilePath;
+	p_TreeBase->OpenedFileName = FName;
+	p_TreeBase->PointSize = PointSize;
 }

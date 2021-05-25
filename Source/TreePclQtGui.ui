@@ -100,6 +100,7 @@
     <addaction name="separator"/>
     <addaction name="actionSave_Point_Cloud"/>
     <addaction name="actionSave_as"/>
+    <addaction name="actionSave_Surface"/>
     <addaction name="separator"/>
     <addaction name="actionInsert_And_Move"/>
    </widget>
@@ -175,12 +176,19 @@
     <addaction name="separator"/>
     <addaction name="actionDemo_Form_and_Class"/>
    </widget>
+   <widget class="QMenu" name="menuPlotProcessing">
+    <property name="title">
+     <string>PlotProcessing</string>
+    </property>
+    <addaction name="actionPlotProc"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuView"/>
    <addaction name="menuBaseFittingMethods"/>
    <addaction name="menuTreePointPrc"/>
    <addaction name="menuStemPointPrc"/>
    <addaction name="menu_StemParametersRetrieval"/>
+   <addaction name="menuPlotProcessing"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpen_File">
@@ -266,10 +274,16 @@
    <property name="text">
     <string>Stem Volume By Vertical Slices</string>
    </property>
+   <property name="iconVisibleInMenu">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionStemVolumeByTetrahedron">
    <property name="text">
     <string>Stem Volume By Tetrahedron</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionProfile_Curve_of_Vertical_slices_calculation">
@@ -368,6 +382,19 @@
   <action name="actionSimulate_Measure">
    <property name="text">
     <string>Simulating Measure</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionSave_Surface">
+   <property name="text">
+    <string>Save Surface</string>
+   </property>
+  </action>
+  <action name="actionPlotProc">
+   <property name="text">
+    <string>PlotProc</string>
    </property>
   </action>
  </widget>

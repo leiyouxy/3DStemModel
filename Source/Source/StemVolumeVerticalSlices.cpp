@@ -33,6 +33,16 @@ void CStemVolumeVerticalSlices::FormReset()
 	emitUpdateUI();
 }
 
+//创建Delaunay Surface 2020.12.26
+void CStemVolumeVerticalSlices::ConstructeDelaunayTrigualtionSurface()
+{
+	if (AllRefinedStemGridPoints->points.size() == 0)
+		StemGridPointsRefine.GetRefinePointsForSurfaceInterpolation(InterpolationPointsForSurface);
+
+
+
+}
+
 void CStemVolumeVerticalSlices::OnShow()
 {
 	StemVolumeVerticalSlices.lineEditStemHeight->setText(QString::number(abs(ZMax - ZMin), 10, 4));
@@ -85,6 +95,9 @@ CStemVolumeVerticalSlices::CStemVolumeVerticalSlices(QGroupBox * ParentWin, stri
 
 	connect(StemVolumeVerticalSlices.pushButtonBat, SIGNAL(clicked()), this, SLOT(Bat()));
 
+	connect(StemVolumeVerticalSlices.pushButtonSurfaceReconstruction, 
+		SIGNAL(clicked()), this, SLOT(SurfaceReconstruction()));
+
 	//StemVolumeVerticalSlices.pushButtonCalcStemVolume->setEnabled(false);
 	//StemVolumeVerticalSlices.pushButtonShowCircle->setEnabled(false);
 	//StemVolumeVerticalSlices.pushButtonShowCylinder->setEnabled(false);
@@ -104,7 +117,13 @@ CStemVolumeVerticalSlices::CStemVolumeVerticalSlices(QGroupBox * ParentWin, stri
 	widget->show();	
 }
 CStemVolumeVerticalSlices::~CStemVolumeVerticalSlices()
-{		
+{	
+	for (int i = 0; i < InterpolationPointsForSurface.size(); i++)
+	{
+		InterpolationPointsForSurface[i]->points.clear();
+	}
+
+	AllRefinedStemGridPoints->points.clear();
 	BeforeRefineProfileCurvePoints->points.clear();
 	AfterRefineProfileCurvePoints->points.clear();
 	BeforeRefineBezierCurvePoints->points.clear();
@@ -120,7 +139,7 @@ CStemVolumeVerticalSlices::~CStemVolumeVerticalSlices()
 	Viewer->removePointCloud(AfterRefineBezierCurvePointsStr);	
 	Viewer->removePointCloud(AfterSplineSurfaceStr);
 
-	emitUpdateUI();
+	
 	emitUpdateUI();
 }
 
@@ -426,6 +445,11 @@ void CStemVolumeVerticalSlices::CalcStemByMethods()
 	StemVolumeVerticalSlices.pushButtonCalcStemVolume->setEnabled(false);
 	StemVolumeVerticalSlices.pushButtonHoleFill->setEnabled(false);
 	
+	pcl::PolygonMesh Mesh;
+	CCrustSurfaceReconstruction::PeformSurfaceReconstruction(InputCloud, InputCloud, Mesh);
+	PointBase::ShowPolygonMesh(Viewer, InputCloud, Mesh);
+	emitUpdateUI();
+
 	if (!IsRepaired)
 	{
 		FillRepairBySpline();
@@ -602,36 +626,25 @@ void CStemVolumeVerticalSlices::CalcStemByMethods()
 	emitUpdateStatusBar("The stem volume calculation has been completed!", 5000);
 }
 
-
+//根据样条曲面计算材积
 double CStemVolumeVerticalSlices::CalcVolumeByStemSplineSurface(double HStep, double VStep, double UStep)
 {	
 	//SurfaceInterpolation.SetInputStemPoints(InputCloud, 
 	//	StemVolumeVerticalSlices.spinBoxThickNess->text().toDouble(), 10, 
 	//	StemVolumeVerticalSlices.spinBoxAngleValue->text().toDouble(), ZMax, HStep, UStep, VStep);
 
-	vector<pcl::PointCloud<pcl::PointXYZRGB>::Ptr> InterpolationPointsValue;	
-	
-	StemGridPointsRefine.GetRefinePointsForSurfaceInterpolation(InterpolationPointsValue);	
-	//Procedure for the toppest slice
-	///*
-	pcl::PointCloud<pcl::PointXYZRGB>::Ptr CurSectionInterpolationPoints(new pcl::PointCloud<pcl::PointXYZRGB>());
-	CurSectionInterpolationPoints->points.insert(CurSectionInterpolationPoints->points.begin(),
-		InterpolationPointsValue[InterpolationPointsValue.size() - 1]->points.begin(), 
-		InterpolationPointsValue[InterpolationPointsValue.size() - 1]->points.end());
-	PointBase::SetPointsCoordinateValue(CurSectionInterpolationPoints, "Z", ZMax);
-	InterpolationPointsValue.push_back(CurSectionInterpolationPoints);
+	GetInterpolationPointsForSurface();
 	
 	///*/
 	//CSurfaceInterpolation SurfaceInterpolation;
-	SurfaceInterpolation.SetInputInterpolationPoints(InterpolationPointsValue, HStep, UStep, VStep);
+	SurfaceInterpolation.SetInputInterpolationPoints(InterpolationPointsForSurface, HStep, UStep, VStep);
 	SurfaceInterpolation.SetViewer(Viewer);
-	//SurfaceInterpolation.ShowInterpolationPoints(Viewer);
+	SurfaceInterpolation.ShowInterpolationPoints(Viewer);
 
 	SurfaceInterpolation.p_TreePclQtGui = this->p_TreePclQtGui;
 	SurfaceInterpolation.InterpolationSurface();	
 	//SurfaceInterpolation.DrawSurfaceByDefinition(Viewer, 0.01, 0.001);
 	
-
 	if (StemVolumeVerticalSlices.checkBoxShowSurface->checkState() == 2)
 	{
 		ShowSplineSurfacePoints(2);
@@ -643,9 +656,9 @@ double CStemVolumeVerticalSlices::CalcVolumeByStemSplineSurface(double HStep, do
 	//emitUpdateUI();
 
 	//SurfaceInterpolation.ShowInterpolationPoints(Viewer);	
-	return SurfaceInterpolation.CalcVolume(ZMin, ZMax);
+	//return SurfaceInterpolation.CalcVolume(ZMin, ZMax);
 	//*/
-	//return 0;
+	return 0;
 }
 
 void CStemVolumeVerticalSlices::CalcStemByMethodsThread(int SliceIndex)
@@ -846,6 +859,29 @@ void CStemVolumeVerticalSlices::SaveToFile(string ProcFileName)
 	SaveStringToFile(ResultFileName, ResultStr);
 }
 
+//获取用于表面重建的插值点 2020.12.26
+void CStemVolumeVerticalSlices::GetInterpolationPointsForSurface()
+{
+	StemGridPointsRefine.GetRefinePointsForSurfaceInterpolation(InterpolationPointsForSurface);
+	//Procedure for the toppest slice
+	///*
+	pcl::PointCloud<pcl::PointXYZRGB>::Ptr CurSectionInterpolationPoints(new pcl::PointCloud<pcl::PointXYZRGB>());
+	CurSectionInterpolationPoints->points.insert(CurSectionInterpolationPoints->points.begin(),
+		InterpolationPointsForSurface[InterpolationPointsForSurface.size() - 1]->points.begin(),
+		InterpolationPointsForSurface[InterpolationPointsForSurface.size() - 1]->points.end());
+	PointBase::SetPointsCoordinateValue(CurSectionInterpolationPoints, "Z", ZMax);
+	InterpolationPointsForSurface.push_back(CurSectionInterpolationPoints);
+
+	AllRefinedStemGridPoints->points.clear();
+
+	for (int i = 0; i < InterpolationPointsForSurface.size(); i++)
+	{
+		AllRefinedStemGridPoints->points.insert(AllRefinedStemGridPoints->points.end(),
+			InterpolationPointsForSurface[i]->points.begin(),
+			InterpolationPointsForSurface[i]->points.end());
+	}
+}
+
 void CStemVolumeVerticalSlices::Bat()
 {
 	IsBat = true;
@@ -859,7 +895,7 @@ void CStemVolumeVerticalSlices::Bat()
 	string FilePathStr;
 	FilePathStr = string(Drive) + string(FilePath);
 	vector<string> BatFiles;	
-	GetFiles(FilePath, BatFiles);
+	GetFiles(FilePathStr, BatFiles);
 
 	for each (string FileNameStr in BatFiles)
 	{
@@ -869,7 +905,7 @@ void CStemVolumeVerticalSlices::Bat()
 			OpenedFilePath = FilePathStr + FileNameStr;			
 
 			InputCloud->points.clear();
-			PointBase::OpenPCLFile(OpenedFilePath, InputCloud);
+			PointBase::OpenPCLFile(OpenedFilePath, InputCloud, false);
 			CTreeBase::SetInputCloud(CTreeBase::InputCloud);
 
 			RefreshData();
@@ -948,4 +984,13 @@ void CStemVolumeVerticalSlices::Bat()
 		}
 	}
 	IsBat = false;
+}
+
+void CStemVolumeVerticalSlices::SurfaceReconstruction()
+{
+	pcl::PolygonMesh Mesh;
+	CCrustSurfaceReconstruction::PeformSurfaceReconstruction(InputCloud, InputCloud, Mesh);
+	emitUpdateUI();
+	PointBase::ShowPolygonMesh(Viewer, InputCloud, Mesh);
+	emitUpdateUI();
 }

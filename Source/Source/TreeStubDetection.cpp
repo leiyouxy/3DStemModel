@@ -28,6 +28,12 @@ CTreeStubDetection::CTreeStubDetection(QGroupBox * ParentWin)
 	connect(StemStubRemovalForm.pushButtonCheckStub, SIGNAL(clicked()), this, SLOT(CheckStub()));
 	connect(StemStubRemovalForm.pushButtonRedo, SIGNAL(clicked()), this, SLOT(Redo()));
 	connect(StemStubRemovalForm.pushButtonRemoval, SIGNAL(clicked()), this, SLOT(StubRemoval()));
+	connect(StemStubRemovalForm.pushButtonRemoval_Bat, SIGNAL(clicked()), this, SLOT(StubRemovalUnderGivenHeightBat()));
+
+	connect(StemStubRemovalForm.pushButton_CircleCutCheck, SIGNAL(clicked()), this, SLOT(CircleCuttingCheck()));
+	connect(StemStubRemovalForm.pushButtonRedo_CircleCut, SIGNAL(clicked()), this, SLOT(CircleCuttingRedo()));
+	connect(StemStubRemovalForm.pushButtonRemoval_CircleCut, SIGNAL(clicked()), this, SLOT(CircleCutting()));
+	connect(StemStubRemovalForm.pushButtonRemoval_BatCircleCut, SIGNAL(clicked()), this, SLOT(CircleCuttingBat()));
 
 	StemStubRemovalForm.pushButtonRedo->setEnabled(false);
 	StemStubRemovalForm.pushButtonRemoval->setEnabled(false);
@@ -117,6 +123,22 @@ void CTreeStubDetection::ShowHeightPlane(int Value)
 	ShowPoints(PlanePoints, PlanePointsStr, PointSize);
 }
 
+void CTreeStubDetection::CircleCuttingCheck()
+{
+}
+
+void CTreeStubDetection::CircleCuttingRedo()
+{
+}
+
+void CTreeStubDetection::CircleCutting()
+{
+}
+
+void CTreeStubDetection::CircleCuttingBat()
+{
+}
+
 void CTreeStubDetection::StubRemoval()
 {
 	StemStubRemovalForm.pushButtonRedo->setEnabled(false);
@@ -143,6 +165,69 @@ void CTreeStubDetection::StubRemoval()
 	RefreshData();
 	StemStubRemovalForm.pushButtonRedo->setEnabled(true);
 	StemStubRemovalForm.pushButtonCheckStub->setEnabled(true);
+}
+
+//2021.01.30 批量移除树桩部位的点云
+void CTreeStubDetection::StubRemovalUnderGivenHeight()
+{
+	int StartIndex = StemStubRemovalForm.doubleSpinBoxCount_Start->text().toInt();
+
+	pcl::PointCloud<pcl::PointXYZRGB>::Ptr ResultPoints (new pcl::PointCloud<pcl::PointXYZRGB>());
+
+	for (int i = StartIndex + 1; i < HorizontalPartition.SectionsCount; i++)
+	{
+		pcl::PointCloud<pcl::PointXYZRGB>::Ptr SectionPoints(new pcl::PointCloud<pcl::PointXYZRGB>());
+		HorizontalPartition.GetSectionPoints(i, SectionPoints);
+
+		ResultPoints->points.insert(ResultPoints->points.end(), SectionPoints->points.begin(),
+			SectionPoints->points.end());
+	}
+	InputCloud->points.clear();
+	PointBase::PointCopy(ResultPoints, InputCloud);
+}
+
+void CTreeStubDetection::StubRemovalUnderGivenHeightBat()
+{	
+	char Drive[_MAX_DRIVE];
+	char FilePath[_MAX_DIR];
+	char Fname[_MAX_FNAME];
+	char Ext[_MAX_EXT];
+	_splitpath(OpenedFilePath.c_str(), Drive, FilePath, Fname, Ext);
+
+	string FilePathStr;
+	FilePathStr = string(Drive) + string(FilePath);
+	vector<string> BatFiles;
+	GetFiles(FilePathStr, BatFiles);
+
+	for each (string FileNameStr in BatFiles)
+	{
+		cout << "Current File Name:" << FileNameStr << endl;
+		_splitpath(FileNameStr.c_str(), Drive, FilePath, Fname, Ext);
+		if ((strcmp(Ext, ".pcd") == 0) || (strcmp(Ext, ".vtx") == 0) 
+			|| (strcmp(Ext, ".las") == 0))
+		{
+			OpenedFilePath = FilePathStr + FileNameStr;
+			string SaveFileName = FilePathStr + "StemAfterOutliersRemoved\\" + FileNameStr;
+
+			InputCloud->points.clear();
+			PointBase::OpenPCLFile(OpenedFilePath, InputCloud, false);
+			CTreeBase::SetInputCloud(CTreeBase::InputCloud);
+
+			RefreshData();
+			emitUpdateAppTitle(OpenedFilePath);
+			emitUpdateUI();
+
+			StubRemovalUnderGivenHeight();
+			//CheckingOutliers();
+			//RemoveOutliers();
+
+			//CheckingOutliers();
+			//RemoveOutliers();
+
+			//PointBase::SavePCDToFileName(InputCloud, OpenedFilePath);
+			PointBase::SavePCDToFileName(InputCloud, SaveFileName);
+		}
+	}	
 }
 
 void CTreeStubDetection::SetViewer(boost::shared_ptr<pcl::visualization::PCLVisualizer> ViewerValue)
@@ -205,7 +290,7 @@ void CTreeStubDetection::RefreshData()
 {
 	//Invoking Base class RefreshData method
 	CTreeBase::RefreshData();
-	StemStubRemovalForm.spinBoxStartHeight->setValue(50);
+	StemStubRemovalForm.spinBoxStartHeight->setValue(150);
 	GetParameters();
 
 	ShowSlicesPoints(StemStubRemovalForm.checkBoxVerticalSlices->checkState());

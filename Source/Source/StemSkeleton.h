@@ -69,10 +69,13 @@ private:
 public:
 	pcl::PointCloud<pcl::PointXYZRGB>::Ptr CentroidPoints;		//树干的骨架点
 private:
+	double MaximumHeight;
+
 	pcl::PointCloud<pcl::PointXYZRGB>::Ptr OptimizedCentroidPoints;		//树干的骨架点
 	pcl::PointCloud<pcl::PointXYZRGB>::Ptr StemSkeletonPoints;	//树干骨架的样条点
 	pcl::PointCloud<pcl::PointXYZRGB>::Ptr AllProfilecurvePoints;	//树干骨架的样条点
 	boost::shared_ptr<pcl::visualization::PCLVisualizer> Viewer;
+	
 	//SectionVector SectionsVector;
 
 	//is the input cloud has points from stem tip, if not, 2019.1.23
@@ -96,10 +99,10 @@ public:
 	// IsOptimizedValue 表示 是否对几何中心点进行优化，
 	void SetInputs(pcl::PointCloud<pcl::PointXYZRGB>::Ptr StemCloudValue,
 		float SectionThickNessValue = 0.5, bool IsOptimizedValue = true, int CalcSectionNumbersValue = 10,
-		int StartIndexValue = 0, int TheIncludedAngleValue = 60);
+		int StartIndexValue = 0, int TheIncludedAngleValue = 60, double MaximumHeightValue = 0);
 	
 	//构建骨架的样条曲线
-	void ConstructStemSplineCurve(bool IsDirect = false);
+	void ConstructStemSplineCurve(double StartHeight = 100, bool IsDirect = false);
 
 	////在指定的位置处画横断面  这个函数应在树干骨架移动前完成
 	//void DrawCrossSectionalPlaneByHeight(float Height, int LineWidth = 10, float PointSize = 3, 

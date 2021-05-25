@@ -276,7 +276,7 @@ void CDividePointsByDelaunayLine::PerformParallel(
 		{
 			PointBase::SetPointColor(TempPartPoints, ColorBaseS[(i+1) % 30]);
 			PointBase::ShowPointXYZRGB(Viewer, TempPartPoints, StringBase::IntToStr(i) +
-				StringBase::ClockValue(), 5);
+				StringBase::ClockValue(), 6);
 			//SaveIndexsToFile(InputPointsAndBorderEdges[i].PartIndexs, 
 			//	"I:\\PlanePoints\\" + StringBase::IntToStr(i) + ".txt");
 			//PointBase::SavePCDToFileName(TempPartPoints, 

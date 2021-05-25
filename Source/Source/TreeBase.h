@@ -31,7 +31,7 @@ public:
 	TreePclQtGui * p_TreePclQtGui;
 	int PointSize;
 	string OpenedFilePath;
-	string FileName;
+	string OpenedFileName;
 	string AppPath;
 	string ClassName;
 

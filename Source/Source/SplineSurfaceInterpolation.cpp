@@ -1123,3 +1123,5 @@ void CSurfaceInterpolation::ShowInterpolationPoints(boost::shared_ptr<pcl::visua
 	PointsMove(SurfaceAllPoints, 60, 0, 0);
 	PointBase::ShowPointXYZRGB(Viewer, SurfaceAllPoints, StringBase::ClockValue() + "InterpolationPoints", 3);
 }
+
+

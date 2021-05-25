@@ -106,7 +106,8 @@ void CDelaunayParallel::DelaunayParallelGrowth()
 
 			vector<DiviedPointsAndBorderEdge> TempTempPointsAndBorderEdges;
 
-			TempDividePointsByDelaunayLine.HalfDivide(TempTempPointsAndBorderEdges, 
+			TempDividePointsByDelaunayLine.HalfDivide(
+				TempTempPointsAndBorderEdges, 
 				TempGlobalMeshs,
 				DelaunayParallelForm.checkBoxShowGuidLine->checkState(),
 				DelaunayParallelForm.checkBoxShowGuidPolyLine->checkState(),
@@ -124,8 +125,7 @@ void CDelaunayParallel::DelaunayParallelGrowth()
 			#pragma omp critical
 			{				
 				//if (UndoPointsAndBorderEdges[i].PartIndexs.size() == 107 &&
-				//	UndoPointsAndBorderEdges[i].CurBorderEdges.size() == 49)
-				
+				//	UndoPointsAndBorderEdges[i].CurBorderEdges.size() == 49)				
 					
 				//if (UndoPointsAndBorderEdges[i].PartIndexs.size() == 174 &&
 				//	UndoPointsAndBorderEdges[i].CurBorderEdges.size() == 71)	
@@ -206,7 +206,8 @@ void CDelaunayParallel::DelaunayParallelGrowth()
 	//移除分割时产生的Mesh
 	//GlobalMeshs.polygons.clear(); //
 
-	ParaGlobalMeshs.polygons.insert(ParaGlobalMeshs.polygons.end(), TempParallelMesh.polygons.begin(), TempParallelMesh.polygons.end());
+	ParaGlobalMeshs.polygons.insert(ParaGlobalMeshs.polygons.end(), 
+		TempParallelMesh.polygons.begin(), TempParallelMesh.polygons.end());
 	
 	cout << "点个数:" << InputCloud->points.size()
 		<< " 三角形个数:" << ParaGlobalMeshs.polygons.size() << endl;
@@ -331,13 +332,13 @@ void CDelaunayParallel::DelaunayParallelGrowth()
 	//PointBase::SetPointColor(OutPointsAndBorderEdges[1].PartIndexs, ColorBase::GreenColor);
 	//PointBase::ShowPointXYZRGBIndex(Viewer, OutPointsAndBorderEdges[1].PartIndexs, "RightCloud", 3);
 
-	//Viewer->addPolygonMesh(PolygonMesh, "DelaunayParallel");	
+	//Viewer->addPolygonMesh(ParaGlobalMeshs, "DelaunayParallel");
 	
 	if (DelaunayParallelForm.checkBoxShowDivideMesh->checkState())
 	{
-		//PointBase::MeshToTriangles(Viewer, InputCloud, GlobalMeshs, "DelaunayParallel");
-		Viewer->removePolygonMesh("ParaGlobalMeshs");
-		Viewer->addPolylineFromPolygonMesh(ParaGlobalMeshs, "ParaGlobalMeshs");
+		PointBase::MeshToTriangles(Viewer, InputCloud, ParaGlobalMeshs, "DelaunayParallel");
+		//Viewer->removePolygonMesh("ParaGlobalMeshs");
+		//Viewer->addPolylineFromPolygonMesh(ParaGlobalMeshs, "ParaGlobalMeshs");
 	}
 
 	//PointBase::ShowPointXYZRGBText(Viewer, InputCloud, "Test", 1);	

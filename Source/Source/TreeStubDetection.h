@@ -43,7 +43,20 @@ public Q_SLOTS:
 
 	void StubRemoval();
 
+	//2021.01.30 批量移除树桩部位的点云
+	void StubRemovalUnderGivenHeight(); 
+
+	void StubRemovalUnderGivenHeightBat();
+
 	void ShowHeightPlane(int Value);
+
+	void CircleCuttingCheck();
+
+	void CircleCuttingRedo();
+
+	void CircleCutting();
+
+	void CircleCuttingBat();
 public:	
 	CTreeStubDetection(QGroupBox * ParentWin);
 	~CTreeStubDetection();

@@ -2,7 +2,7 @@
 
 void CCluster::RefreshData()
 {
-	CTreeBase::RefreshData();
+	CTreeBase::RefreshData();	
 }
 
 void CCluster::RunK_MeansCluster()

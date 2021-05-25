@@ -257,6 +257,20 @@ static pcl::PointXYZRGB GetPointsTangentPlane(
 	return TempCenterPoint;
 }
 
+static int Points3DTo2D(
+	pcl::PointCloud<pcl::PointXYZRGB>::Ptr Point3D,
+	pcl::PointCloud<pcl::PointXYZRGB>::Ptr Point2D)
+{
+	if (Point3D->points.size() < 3) return 0;
+	pcl::PointXYZRGB NormalPoint = GetNormalOfTriangle(Point3D->points[0],
+		Point3D->points[1], Point3D->points[2]);
+	if (NormalPoint.x == 0 && NormalPoint.y ==0 && NormalPoint.z ==0)
+		return 0;
+
+	GeometryBase::RotateNormalToVertical(Point3D, Point2D, NormalPoint);
+		return 1;
+}
+
 static double AreaOfThreePoints(double X1, double Y1, double Z1,
 		double X2, double Y2, double Z2,
 		double X3, double Y3, double Z3)
@@ -312,7 +326,7 @@ static pcl::PointXYZRGB GetNormalOfTriangle(pcl::PointXYZRGB A, pcl::PointXYZRGB
 	AB.x = A.x - B.x, AB.y = A.y - B.y, AB.z = A.z - B.z;
 	AC.x = A.x - C.x, AC.y = A.y - C.y, AC.z = A.z - C.z;
 
-	return PointBase::PointsCrossProduct(AB, AC);
+	return PointBase::PointNormalized(PointBase::PointsCrossProduct(AB, AC));
 }
 
 //面积公式有错误，待测试(2018.12.31)

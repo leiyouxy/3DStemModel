@@ -58,17 +58,21 @@ void CPointUnit::SetUnit(QString UnitStr)
 	else if (UnitStr == "millimeter")
 	{		
 		Mutiple = 0.1;
-	}	
+	}		
 }
 
 void CPointUnit::Ok()
 {
-	if (abs(Mutiple) < EPSM6)
+	if (abs(Mutiple) <= EPSM6)
 	{
 		SetUnit(PointUnitDialog.comboBoxUnit->currentText());
 	}
 
 	if (abs(Mutiple - 1) > EPSM6)
+	{
+		//cout << "PointZoom(InputCloud, Mutiple), Mutiple:" << Mutiple << endl;
 		PointBase::PointZoom(InputCloud, Mutiple);
+	}
+
 	this->close();
 }

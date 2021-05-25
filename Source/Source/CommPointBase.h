@@ -33,6 +33,7 @@
 #include <Eigen/src/Eigenvalues/EigenSolver.h>
 #include <pcl/filters/project_inliers.h>
 #include <boost/function.hpp>
+//#include <liblas/liblas.hpp>
 
 #include "Commdefinitions.h"
 #include "CommClass.h" 
@@ -116,6 +117,7 @@ inline void PointsMove(pcl::PointCloud<PointXYZRGBIndex>::Ptr pPoints, double X,
 
 inline void PointsMove(pcl::PointCloud<pcl::PointXYZRGB>::Ptr pPoints, double X, double Y, double Z)	//设置点云的坐标平移
 {
+	cout << "点云位置发生移动！X："<<X<<", Y:"<<Y<<", Z:"<<Z << endl;
 	for (int i = 0; i < pPoints->points.size(); i++)
 	{
 		pPoints->points[i].x = pPoints->points[i].x + X;
@@ -150,6 +152,16 @@ inline void SaveStringToFile(string FileName, string SaveContentRow)
 	write.open(FileName, ios::app);
 	write << SaveContentRow << endl;
 	write.close();
+}
+
+inline void ReadFileToStrings(string FileName, vector<string> & ReadStrings)
+{
+	ifstream Read;
+	Read.open(FileName, ios::in);
+	string Temps = "";
+	while (getline(Read, Temps))	
+		ReadStrings.push_back(Temps);	
+	Read.close();
 }
 
 inline string GetDateTime()
@@ -248,15 +260,9 @@ public:
 		
 		for (int i = 0; i < cloud->points.size(); i++)
 		{
-			int R, G, B;
-
-			R = cloud->points[i].r;
-			G = cloud->points[i].g;
-			B = cloud->points[i].b;
-
 			SaveFile << cloud->points[i].x << " " << cloud->points[i].y << " "
-				<< cloud->points[i].z << " " << R << " "
-				<< G << " " << B << endl;
+				<< cloud->points[i].z << " " << cloud->points[i].r << " "
+				<< cloud->points[i].g << " " << cloud->points[i].b << endl;
 		}
 		SaveFile << flush; 
 		SaveFile.close();
@@ -296,6 +302,92 @@ public:
 		Writer.write<pcl::PointXYZRGB>(PLYName, *cloud);
 	}
 
+	static void SaveMeshToPLY(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud, 
+		pcl::PolygonMesh Mesh, string PLYName)
+	{
+		ofstream SaveFile;
+		SaveFile.open(PLYName);
+
+		//File Header
+		SaveFile << "ply\n";
+		SaveFile << "format ascii 1.0\n";
+		SaveFile << "comment VTK generated PLY File\n";
+		SaveFile << "obj_info vtkPolyData points and polygons: vtk4.0\n" ;
+		SaveFile << "element vertex "<< cloud->points.size() << "\n";
+		SaveFile << "property float x\n";
+		SaveFile << "property float y\n";
+		SaveFile << "property float z\n";
+		//SaveFile << "property float r" << endl;
+		//SaveFile << "property float g" << endl;
+		//SaveFile << "property float b" << endl;
+		SaveFile << "element face " << Mesh.polygons.size()  << "\n";
+		SaveFile << "property list uchar int vertex_indices\n";
+		SaveFile << "end_header\n" ;
+		for (int i = 0; i < cloud->points.size(); i++)
+		{
+			//SaveFile << cloud->points[i].x << " " << cloud->points[i].y << " "
+			//	<< cloud->points[i].z << " " << cloud->points[i].r << " "
+			//	<< cloud->points[i].g << " " << cloud->points[i].b << endl;
+			SaveFile << cloud->points[i].x << " " << cloud->points[i].y << " "
+				<< cloud->points[i].z << " \n";
+		}
+		for (int i = 0; i < Mesh.polygons.size(); i++)
+		{
+			SaveFile << Mesh.polygons[i].vertices.size();
+			for (int j = 0; j < Mesh.polygons[i].vertices.size(); j++)
+			{
+				SaveFile << " " << Mesh.polygons[i].vertices[j];
+			}
+			SaveFile << " \n" ;
+		}
+		//SaveFile << flush;
+		SaveFile.close();
+	}
+
+	static void SaveToLASBYLibLas(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud, string LASName)
+	{
+		/*
+		std::ofstream ofs(LASName.c_str(), ios::out | ios::binary);
+		if (!ofs.is_open())
+		{
+			std::cout << "err  to  open  file  las....." << std::endl;
+			return;
+		}
+		liblas::Header header;
+		header.SetVersionMajor(1);
+		header.SetVersionMinor(2);
+		header.SetDataFormatId(liblas::ePointFormat3);
+		header.SetScale(0.001, 0.001, 0.001);
+
+		liblas::Writer writer(ofs, header);
+		liblas::Point point(&header);
+
+		for (size_t i = 0; i < cloud->points.size(); i++)
+		{
+			double x = cloud->points[i].x;
+			double y = cloud->points[i].y;
+			double z = cloud->points[i].z;
+			point.SetCoordinates(x, y, z);
+
+			uint32_t red = (uint32_t)cloud->points[i].r;
+			uint32_t green = (uint32_t)cloud->points[i].g;
+			uint32_t blue = (uint32_t)cloud->points[i].b;
+			liblas::Color pointColor(red, green, blue);
+			point.SetColor(pointColor);
+
+			writer.WritePoint(point);
+			//std::cout << x << "," << y << "," << z << std::endl;
+		}
+		double minPt[3] = { 9999999, 9999999, 9999999 };
+		double maxPt[3] = { 0, 0, 0 };
+		header.SetPointRecordsCount(cloud->points.size());
+		header.SetPointRecordsByReturnCount(0, cloud->points.size());
+		header.SetMax(maxPt[0], maxPt[1], maxPt[2]);
+		header.SetMin(minPt[0], minPt[1], minPt[2]);
+		writer.SetHeader(header);
+		//*/
+	}
+
 	static void SaveToLAS(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud, string LASName)
 	{			
 		//File need be created first.
@@ -310,9 +402,9 @@ public:
 		table.layout()->registerDim(pdal::Dimension::Id::X);
 		table.layout()->registerDim(pdal::Dimension::Id::Y);
 		table.layout()->registerDim(pdal::Dimension::Id::Z);
-		table.layout()->registerDim(pdal::Dimension::Id::Red);
-		table.layout()->registerDim(pdal::Dimension::Id::Green);
-		table.layout()->registerDim(pdal::Dimension::Id::Blue);
+		//table.layout()->registerDim(pdal::Dimension::Id::Red);
+		//table.layout()->registerDim(pdal::Dimension::Id::Green);
+		//table.layout()->registerDim(pdal::Dimension::Id::Blue);
 
 		pdal::PointViewPtr view(new pdal::PointView(table));
 		
@@ -322,9 +414,9 @@ public:
 			view->setField(pdal::Dimension::Id::Y, i, cloud->points[i].y);
 			view->setField(pdal::Dimension::Id::Z, i, cloud->points[i].z);
 			
-			view->setField(pdal::Dimension::Id::Red, i, cloud->points[i].r);
-			view->setField(pdal::Dimension::Id::Green, i, cloud->points[i].g);
-			view->setField(pdal::Dimension::Id::Blue, i, cloud->points[i].b);
+			//view->setField(pdal::Dimension::Id::Red, i, cloud->points[i].r);
+			//view->setField(pdal::Dimension::Id::Green, i, cloud->points[i].g);
+			//view->setField(pdal::Dimension::Id::Blue, i, cloud->points[i].b);
 		}
 
 		pdal::BufferReader reader;
@@ -437,6 +529,10 @@ public:
 		pdal::Dimension::IdList dims = point_view->dims();
 		pdal::LasHeader las_header = las_reader.header();
 		bool HasColor = las_header.hasColor();
+		if (HasColor)
+			cout<<"has Color"<<endl;
+		else
+			cout << "No Color" << endl;
 		//write point
 
 		cloud_ptr->clear();
@@ -450,9 +546,19 @@ public:
 
 			if (HasColor)
 			{
-				thePt.r = point_view->getFieldAs<int>(pdal::Dimension::Id::Red, idx);
-				thePt.g = point_view->getFieldAs<int>(pdal::Dimension::Id::Green, idx);
-				thePt.b = point_view->getFieldAs<int>(pdal::Dimension::Id::Blue, idx);				
+				thePt.rgba = 255 << 24 | ((int)point_view->getFieldAs<int>(pdal::Dimension::Id::Red, idx)) << 16 
+					| ((int)point_view->getFieldAs<int>(pdal::Dimension::Id::Green, idx)) << 8 
+					| ((int)point_view->getFieldAs<int>(pdal::Dimension::Id::Blue, idx));
+
+				//thePt.r = point_view->getFieldAs<int>(pdal::Dimension::Id::Red, idx);
+				//thePt.g = point_view->getFieldAs<int>(pdal::Dimension::Id::Green, idx);
+				//thePt.b = point_view->getFieldAs<int>(pdal::Dimension::Id::Blue, idx);	
+				if (idx < 1000)
+				//{
+					cout << "thePt.rgba:" << thePt.rgba<< endl;
+				//	cout << "thePt.g:" << point_view->getFieldAs<int>(pdal::Dimension::Id::Green, idx) << endl;
+				//	cout << "thePt.b:" << point_view->getFieldAs<int>(pdal::Dimension::Id::Blue, idx) << endl;
+				//}
 			}						
 			
 			cloud_ptr->push_back(thePt);
@@ -462,6 +568,9 @@ public:
 		{
 			SetPointColorByHeight(cloud_ptr);
 		}
+		
+		cout << "open Las file, and readying for Zoom 100 size!" << endl;
+		PointBase::PointZoom(cloud_ptr, 100);
 	}
 	//*/
 	//2018.10.22 读XYZRGB文件 
@@ -592,7 +701,7 @@ public:
 				int I = 0;
 
 				Str = line + " ";
-
+				//cout << "Cur Str: " << Str << endl;
 				while ((Index = Str.find_first_of(" ", 1)) != -1)
 				{
 					LeftStr = Str.substr(0, Index);
@@ -602,7 +711,7 @@ public:
 					//istringstream iss(LeftStr);
 					//iss >> Value;
 					Value = atof(LeftStr.c_str());
-					//cout << Value << endl;
+					
 					if (abs(Value) < 1.0e-10)
 					{
 						Str = "";
@@ -637,7 +746,8 @@ public:
 					I++;
 				}
 
-				if (I >= 3)
+				//if (I >= 3)
+				if (I >= 2) //xyz,无颜色数据时，2021，1，20
 				{
 					cloud_ptr->points.push_back(TempPoint);
 				}
@@ -650,9 +760,10 @@ public:
 	}
 
 	static void OpenPCLFile(std::string FileName,
-		pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_ptr, bool MoveToOriginal = true)
+		pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_ptr, bool MoveToOriginal = false)
 		//打开 FileName 文件中的点云
 	{
+		cout<<"正在打开点云文件："<< FileName <<endl;
 		string ExtName = FileName.substr(FileName.length() - 3, 3);
 		
 		if (0 == ExtName.compare("vtx"))
@@ -691,6 +802,7 @@ public:
 
 	static void PointZoom(pcl::PointCloud<pcl::PointXYZRGB>::Ptr pPoints, double Zoom)
 	{
+		cout << "Points Zoomed, Zoom:" << Zoom << endl;
 		for (int i = 0; i < pPoints->points.size(); i++)
 		{
 			pPoints->points[i].x = pPoints->points[i].x * Zoom;
@@ -1063,6 +1175,7 @@ public:
 		else if (0 == ExtName.compare("las"))
 		{
 			PointBase::SaveToLAS(pPoints, FileName);
+			//PointBase::SaveToLASBYLibLas(pPoints, FileName);
 		}
 		else if (0 == ExtName.compare("ply"))
 		{
@@ -1734,8 +1847,11 @@ public:
 
 		//2D 点云不移动
 		if (!PointsIs2D(PointPtr))
+		{
+			cout<<"点云移动到坐标原点附近以使其更好地显示！"<<endl;
 			PointsMove(PointPtr, PointPtr->points[MinDisPointIndex].x * -1,
-					PointPtr->points[MinDisPointIndex].y * -1, PointPtr->points[MinDisPointIndex].z * -1);
+				PointPtr->points[MinDisPointIndex].y * -1, PointPtr->points[MinDisPointIndex].z * -1);
+		}
 	}
 
 	//2016.03.17 修改为移动到原点
@@ -1760,8 +1876,11 @@ public:
 
 		//根据距离原点最近的点,将其移动
 		if (MinDisPointIndex > -1)
+		{
+			cout << "点云移动到坐标原点附近以使其更好地显示！" << endl;
 			PointsMove(PointPtr, PointPtr->points[MinDisPointIndex].x * -1,
 				PointPtr->points[MinDisPointIndex].y * -1, PointPtr->points[MinDisPointIndex].z * -1);
+		}
 	}
 
 	//2016.03.17 修改为移动到原点
@@ -1785,8 +1904,11 @@ public:
 
 		//根据距离原点最近的点,将其移动
 		if (MinDisPointIndex > -1)
+		{
+			cout << "点云移动到坐标原点附近以使其更好地显示！" << endl;
 			PointsMove(PointPtr, PointPtr->points[MinDisPointIndex].x * -1,
 				PointPtr->points[MinDisPointIndex].y * -1, PointPtr->points[MinDisPointIndex].z * -1);
+		}
 	}
 
 	static void StatColorInfor(pcl::PointCloud<PointXYZRGBIndex>::Ptr PointPtr)
@@ -2061,12 +2183,15 @@ public:
 			{
 				Viewer->addLine(PointPtr->points[OneIndex],
 					PointPtr->points[SecondIndex],
+					0, 0, 0,
 					LineNameValue + IntCalcBase.ConvertToString(i * 3), Viewport);
 				Viewer->addLine(PointPtr->points[OneIndex],
 					PointPtr->points[ThirdIndex],
+					0, 0, 0,
 					LineNameValue + IntCalcBase.ConvertToString(i * 3 + 1), Viewport);
 				Viewer->addLine(PointPtr->points[SecondIndex],
 					PointPtr->points[ThirdIndex],
+					0, 0, 0,
 					LineNameValue + IntCalcBase.ConvertToString(i * 3 + 2), Viewport);
 			}
 		}
@@ -2238,7 +2363,7 @@ public:
 		PointC.z = TempPointB.z - t0 * w0;
 	}
 
-	static void PointNormalized(pcl::PointXYZRGB & NormalPoint)
+	static pcl::PointXYZRGB PointNormalized(pcl::PointXYZRGB & NormalPoint)
 	{
 		double Model = sqrt(pow(NormalPoint.x, 2) + pow(NormalPoint.y, 2) + pow(NormalPoint.z, 2));
 		if (Model != 0)
@@ -2247,6 +2372,11 @@ public:
 			NormalPoint.y = NormalPoint.y / Model;
 			NormalPoint.z = NormalPoint.z / Model;
 		}
+		else
+		{
+			NormalPoint.x = 0, NormalPoint.y = 0, NormalPoint.z = 0;
+		}
+		return NormalPoint;
 	}
 
 	static void PointNormalized(pcl::Normal & NormalPoint)
@@ -2270,6 +2400,8 @@ public:
 			z = z / Model;
 		}
 	}
+
+
 
 	//Draw a plane (represeneted by a Square) passed through the CenterPoint，the edge length is equal to 2×LineWidth and the normal of the plane is (a,b,c)
 	static void ShowPlane(boost::shared_ptr<pcl::visualization::PCLVisualizer> Viewer, 
@@ -3141,6 +3273,24 @@ public:
 		else
 			return 1;
 	}
+
+	static void ShowPolygonMesh(boost::shared_ptr<pcl::visualization::PCLVisualizer> Viewer,
+		pcl::PointCloud<pcl::PointXYZRGB>::Ptr Points, pcl::PolygonMesh & Mesh, bool ShowLine = false)
+	{
+		pcl::PCLPointCloud2 TempPointCloud2;
+		Points->width = Points->points.size();
+		Points->height = 1;
+		pcl::toPCLPointCloud2(*Points, TempPointCloud2);
+		Mesh.header = Points->header;
+		Mesh.cloud = TempPointCloud2;
+
+		if (!ShowLine)
+			Viewer->addPolygonMesh(Mesh);
+		else
+			Viewer->addPolylineFromPolygonMesh(Mesh);
+	
+	}
+
 }; //The end for Class PointBase
 
 

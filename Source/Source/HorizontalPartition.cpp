@@ -196,6 +196,7 @@ void CHorizontalPartition::SaveSectionSToEachFile(string FileNamePrefix, int Sta
 	if (StartIndex < 0)
 		StartIndex = 0;		
 
+	#pragma omp parallel for
 	for (int i = StartIndex; i < EndIndex; i++)
 	{
 		pcl::PointCloud<pcl::PointXYZRGB>::Ptr Temp(new pcl::PointCloud<pcl::PointXYZRGB>);
@@ -205,7 +206,7 @@ void CHorizontalPartition::SaveSectionSToEachFile(string FileNamePrefix, int Sta
 				InputCloud->points[SectionsVector[i].Indexs[j]]);
 		}
 		string TempFileName = FileNamePrefix + "_" + StringBase::FloatToStr(SectionThickness) 
-			+ "_" + StringBase::IntToStr(i) + ".pcd";
+			+ "_" + StringBase::IntToStr(i * SectionThickness) + ".pcd";
 		//cout <<"TempFileName"<< TempFileName << endl;
 		PointBase::SavePCDToFileName(Temp, TempFileName);
 	}	

@@ -36,6 +36,8 @@ typedef struct
 {	
 	int ID;							//类编号
 	int IsOutliers;					//是否是噪声点
+	double DisMean;					//聚类点与其中心点距离的均值
+	double DisVariance;				//聚类点与其中心点距离的方差
 	//int IsJoint;					// is the joint point between the branches and stem, 
 	//					can be judged by NodeRoles.ChildNodes.count();
 	vector<int> Indexs;				//点的索引
@@ -72,6 +74,11 @@ public:
 	Cluster GetCluster(int Index);
 	void SetClusterColors(bool IsByID = false);
 
+	//为距离方差小于 Variace 点设置颜色 2021.01.25
+	void SetClusterColorsByDisVariance(double MinDisMean = 2.0,
+		double MaxDisMean = 30, double DisVariace = 10,
+		pcl::PointCloud<pcl::PointXYZRGB>::Ptr OutPutGeometryCenters = NULL);
+
 	//2019.09.23 获取数量最多的点云簇的索引
 	void GetMainCluster(vector<int> & Indexs);
 	int GetMainClusterIndex();
@@ -82,7 +89,7 @@ public:
 		string PointsStr = "");
 
 	//计算每一簇的参数
-	void CalcClusterParameters();
+	void CalcClusterParameters(bool CalcMeanAndVariance = false);
 
 	vector<Cluster> Clusters;	//聚类结果	
 protected:

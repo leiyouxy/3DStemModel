@@ -136,4 +136,5 @@ public:
 		double HSetpValue = 0.05, double RowStepValue = 0.05, double ColStepValue = 0.05);
 
 	void ShowInterpolationPoints(boost::shared_ptr<pcl::visualization::PCLVisualizer> Viewer);
+
 };

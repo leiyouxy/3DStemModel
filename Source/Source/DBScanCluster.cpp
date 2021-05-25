@@ -348,15 +348,19 @@ void CDBScanCluster::ShowCluster(boost::shared_ptr<pcl::visualization::PCLVisual
 	Viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, PointSize, PointsStr);
 }
 
-void CDBScanCluster::CalcClusterParameters()
+void CDBScanCluster::CalcClusterParameters(bool CalcMeanAndVariance)
 {
 	double XMin, XMax, YMin, YMax, ZMin, ZMax;
 	PointBase::GetPointsMaxAndMin(InputCloud, XMax, XMin, YMax, YMin, ZMax, ZMin);
 
 	for (int i = 0; i < Clusters.size(); i++)
 	{
-		pcl::PointCloud<pcl::PointXYZRGB>::Ptr CurClusterPointsPtr (new pcl::PointCloud<pcl::PointXYZRGB>());
+		pcl::PointCloud<pcl::PointXYZRGB>::Ptr CurClusterPointsPtr 
+				(new pcl::PointCloud<pcl::PointXYZRGB>());
 		GetClusterPoints(i, CurClusterPointsPtr);
+		
+		//if (CurClusterPointsPtr->points.size() <= 1)
+		//	cout << "该簇少于等于1个点" << endl;
 
 		double TempMinx, TempMaxx, TempMiny, TempMaxy, TempMinz, TempMaxz;
 		PointBase::GetPointsMaxAndMin(CurClusterPointsPtr, 
@@ -386,6 +390,21 @@ void CDBScanCluster::CalcClusterParameters()
 		Clusters[i].NodeRoles.ParentNode.ClusterIndex = -1;
 
 		Clusters[i].CurDirection.x = 0, Clusters[i].CurDirection.y = 0, Clusters[i].CurDirection.z = 0;
+
+		if (CalcMeanAndVariance)
+		{
+			vector<double> DisS;
+			for (int j = 0; j < CurClusterPointsPtr->points.size(); j++)
+			{
+				double TempDis = PointDis(Clusters[i].ConvexCentroid, CurClusterPointsPtr->points[j]);
+				//double TempDis = PointDis(Clusters[i].Centroid, CurClusterPointsPtr->points[j]);
+				DisS.push_back(TempDis);
+			}
+			VectorBase<double> VectorBaseDouble;
+			Clusters[i].DisVariance = VectorBaseDouble.CalcVariances(DisS, Clusters[i].DisMean);
+			cout<<"DisMean:"<< Clusters[i].DisMean <<", DisVariance:"<< Clusters[i].DisVariance <<endl;
+		}
+
 	}
 }
 
@@ -494,6 +513,34 @@ Cluster CDBScanCluster::GetCluster(int Index)
 {
 	//if (Index < 0 || Index >= Clusters.size()) return;	
 	return Clusters[Index];
+}
+
+//为距离方差小于 Variace 且 均值范围在 MinDisMean 与 MaxDisMean 之间 的簇设置颜色 2021.01.25
+void CDBScanCluster::SetClusterColorsByDisVariance(double MinDisMean,
+			double MaxDisMean, double DisVariace,
+	pcl::PointCloud<pcl::PointXYZRGB>::Ptr OutPutGeometryCenters)
+{
+	for (int i = 0; i < GetClusterNumbers(); i++)
+	{
+		int Color;
+
+		if (Clusters[i].DisVariance <= DisVariace && Clusters[i].DisMean >= MinDisMean &&
+			Clusters[i].DisMean <= MaxDisMean)
+		{
+			Color = ColorBaseS[i % 29 + 1];
+
+			for (int j = 0; j < Clusters[i].Indexs.size(); j++)
+			{
+				InputCloud->points[Clusters[i].Indexs[j]].rgba = Color;
+			}
+
+			if (OutPutGeometryCenters != NULL)
+			{
+				OutPutGeometryCenters->points.push_back(Clusters[i].ConvexCentroid);
+				OutPutGeometryCenters->points[OutPutGeometryCenters->points.size() - 1].z = i;
+			}
+		}
+	}
 }
 
 void CDBScanCluster::SetClusterColors(bool IsByID)

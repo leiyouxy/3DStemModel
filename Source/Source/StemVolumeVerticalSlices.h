@@ -27,6 +27,8 @@ by leiyou 2018.12.28
 #include "StemDiameter.h"
 #include "SplineSurfaceInterpolation.h"
 
+#include  "CrustSurfaceReconstruction.h"
+
 struct VolumeThread
 {
 	bool SliceDone = false;
@@ -83,6 +85,9 @@ public Q_SLOTS:
 	void ShowSplineSurfacePoints(int CheckValue);
 
 	void Bat();
+
+	void SurfaceReconstruction();
+	 
 private:
 	bool IsRepaired;
 	bool IsBat;
@@ -103,6 +108,7 @@ private:
 	CSurfaceInterpolation SurfaceInterpolation;
 
 	pcl::PointCloud<pcl::PointXYZRGB>::Ptr AllRefinedStemGridPoints;
+	vector<pcl::PointCloud<pcl::PointXYZRGB>::Ptr> InterpolationPointsForSurface;
 
 	pcl::PointCloud<pcl::PointXYZRGB>::Ptr RefinedStemGridPoints;
 	
@@ -147,6 +153,13 @@ private:
 		
 	string ResultFileName;
 	void SaveToFile(string ProcFileName);	
+
+	//获取用于表面重建的插值点 2020.12.26
+	void GetInterpolationPointsForSurface();
+
+	//创建Delaunay Surface 2020.12.26
+	void ConstructeDelaunayTrigualtionSurface();
+
 public:
 	void OnShow();// override;
 	CStemVolumeVerticalSlices(QGroupBox * ParentWin, string Type);	

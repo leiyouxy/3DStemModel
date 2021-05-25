@@ -143,6 +143,9 @@ void CBranchRemovalByTangentPlane::ShowHeightPlane(int Value)
 
 	pcl::PointCloud<pcl::PointXYZRGB>::Ptr SectionPoints(new pcl::PointCloud<pcl::PointXYZRGB>());
 	HorizontalPartition.GetSectionPoints(SearchStartIndex + 1, SectionPoints);
+
+	if (SectionPoints->points.size() == 0) return;
+
 	double TempR = GeometryBase::CircleFittingByLeastSquaresFitting(SectionPoints);
 	pcl::PointXYZRGB CenterPoint = GeometryBase::GetCentroidOfPoints(SectionPoints);
 
@@ -197,8 +200,8 @@ void CBranchRemovalByTangentPlane::CheckBranches()
 	{
 		IsUp = false;
 		QString Hint = "Removing branches of section " + QString::number(i) + " ";
-		
-		emitUpdateStatusBar(Hint, 3000);
+		cout << Hint.toStdString() << endl;
+		//emitUpdateStatusBar(Hint, 3000);
 		//使用前面分区的点云计算当前角度分区的切平面数据
 
 		CalcSectionSTangent(i);
@@ -208,6 +211,7 @@ void CBranchRemovalByTangentPlane::CheckBranches()
 
 		//重新计算几何中心 并对当前分区重新分区
 		HorizontalPartition.CalcCenterPointsByConvexPolygon(i);
+		
 		AnglePartition.PartitionSection(i);
 	}
 	//*/
@@ -216,8 +220,8 @@ void CBranchRemovalByTangentPlane::CheckBranches()
 	{
 		IsUp = true;
 		QString Hint = "Removing branches of section " + QString::number(i) + " ";
-
-		emitUpdateStatusBar(Hint, 3000);
+		cout << Hint.toStdString() << endl;
+		//emitUpdateStatusBar(Hint, 3000);
 		//使用前面分区的点云计算当前角度分区的切平面数据
 
 		CalcSectionSTangent(i);
