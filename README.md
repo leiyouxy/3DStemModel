@@ -24,7 +24,7 @@ If you have any problem, please feel free to contact [us](mailto:leiyou@xynu.edu
 The current version of the 3D stem model is implemented based on C++ with the [Point Cloud Library (PCL, 1.8.1)](https://pointclouds.org/), [Qt (5.9.6)](https://www.qt.io/) and [VTK (8.0.0)](https://vtk.org/).
 
 ## Related papers
-1. [Comparison of Numerical Calculation Methods for Stem Diameter Retrieval Using Terrestrial Laser Data](https://www.mdpi.com/2072-4292/13/9/1780). Lei You, JieWei, Xiaojun Liang, Minghua Lou, Yong Pang and Xinyu Song. Remote Sensing: 2021; 13(9):1780. https://doi.org/10.3390/rs13091780
+1. [Comparison of Numerical Calculation Methods for Stem Diameter Retrieval Using Terrestrial Laser Data](https://www.mdpi.com/2072-4292/13/9/1780). Lei You, Jie Wei, Xiaojun Liang, Minghua Lou, Yong Pang and Xinyu Song. Remote Sensing: 2021; 13(9):1780. https://doi.org/10.3390/rs13091780
 
 2. [3D Stem Model Construction with Geometry Consistency using Terrestrial Laser Scanning Data](https://doi.org/10.1080/01431161.2020.1811919). Lei You, Jianwei Guo, Yong Pang, Shouzheng Tang, Xinyu Song and Xiaopeng Zhang. International Journal of Remote Sensing: 2021, 42(2):714-737. DOI: 10.1080/01431161.2020.1811919
 
